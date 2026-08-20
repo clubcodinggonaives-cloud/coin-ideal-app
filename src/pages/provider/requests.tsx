@@ -15,6 +15,8 @@ import {
 import { useAuth } from "@/features/auth/hooks/use-auth"
 import { useServiceRequests, useUpdateRequestStatus } from "@/features/bookings/hooks/use-bookings"
 import { formatDate, formatRelativeTime } from "@/utils/format"
+import { parseDocumentOrderMessage } from "@/features/document-orders/utils/parse-order-message"
+import { OrderMessageSummary } from "@/features/document-orders/components/order-message-summary"
 import type { RequestStatus } from "@/types"
 
 const TABS: { label: string; value: RequestStatus | "all" }[] = [
@@ -112,6 +114,7 @@ function ProviderRequestsPage() {
         <div className="space-y-3">
           {filtered.map((request) => {
             const config = statusConfig[request.status]
+            const orderPayload = parseDocumentOrderMessage(request.message)
             return (
               <Card key={request.id}>
                 <CardContent className="py-4">
@@ -135,7 +138,11 @@ function ProviderRequestsPage() {
                             <span className="ml-1">· {request.service.category.name}</span>
                           )}
                         </p>
-                        <p className="mt-1 text-sm text-gray-600">{request.message}</p>
+                        {orderPayload ? (
+                          <OrderMessageSummary payload={orderPayload} />
+                        ) : (
+                          request.message && <p className="mt-1 text-sm text-gray-600">{request.message}</p>
+                        )}
                         <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-gray-400">
                           <span className="flex items-center gap-1">
                             <Clock className="h-3 w-3" />

@@ -25,16 +25,20 @@ export function useSubmitDocumentOrder() {
 
   return useMutation({
     mutationFn: async ({ order, service, providerId, userId, total }: SubmitDocumentOrderInput) => {
-      let fileUrl: string | null = null
+      let filePath: string | null = null
       if (order.file) {
         const uploaded = await uploadsService.uploadOrderDocument(userId, order.file)
-        fileUrl = uploaded.url
+        filePath = uploaded.path
       }
 
+      // `filePath` only — the order-documents bucket is private (see
+      // 00023_create_storage_buckets.sql). Whoever needs to view the file
+      // later resolves a short-lived signed URL from this path via
+      // uploadsService.getOrderDocumentUrl(), never a stored public URL.
       const messagePayload = {
         type: "document_order" as const,
         fileName: order.file?.name ?? null,
-        fileUrl,
+        filePath,
         pages: order.pages,
         copies: order.copies,
         color: order.color,

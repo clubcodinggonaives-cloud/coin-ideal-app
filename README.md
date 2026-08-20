@@ -97,6 +97,59 @@ RLS est activé sur toutes les tables. Les policies garantissent :
 - Prestataire : gestion de ses services et demandes associées
 - Admin : permissions étendues via fonction `is_admin()`
 
+Les GRANTs nécessaires aux rôles API (`anon`, `authenticated`) sont dans
+`00026_grant_api_roles.sql` — sans ce fichier, un projet Supabase récent
+n'expose aucune table par défaut, même avec des policies RLS correctes.
+
+### Storage
+
+4 buckets sont créés par `00023_create_storage_buckets.sql` :
+
+| Bucket | Public | Usage |
+|--------|--------|-------|
+| `avatars` | Oui | Photo de profil |
+| `service-images` | Oui | Photos des services |
+| `provider-documents` | Non | Documents de vérification prestataire |
+| `order-documents` | Non | Fichiers envoyés pour une commande d'impression/copie |
+
+Les buckets privés ne sont jamais servis via une URL publique — voir
+`uploadsService.getOrderDocumentUrl()` (URL signée, courte durée de vie).
+
+### Données de démarrage
+
+`00025_seed_founding_categories.sql` crée les 3 catégories fondatrices
+(Impression, Copie, Vente d'eau) — sûr à appliquer sur n'importe quel
+environnement, y compris en production : c'est une migration, pas un seed.
+
+`supabase/seed.sql` ne s'exécute qu'en local (`supabase db reset` /
+`supabase start`, jamais sur `supabase db push`). Il crée un compte
+prestataire jetable pour tester le parcours de commande de bout en bout
+sans jamais inventer les identifiants réels de l'entreprise, et 3 services
+de démonstration **inactifs** (`is_active = false`, prix = 0) invisibles
+sur le site public. Avant un vrai lancement :
+
+1. Créer le compte prestataire réel via `/auth/register` (rôle
+   "provider"), avec l'email/mot de passe choisis par GUY Petit-Homme.
+2. Depuis `/provider/services`, renseigner les tarifs réels et activer
+   chaque service.
+
+### Assistant IA (Gemini)
+
+Le scaffold vit dans `supabase/functions/ai-assistant/` — voir les
+commentaires en tête et en pied de ce fichier pour l'architecture et les
+limites connues. Aucune UI de chat n'est branchée dessus pour l'instant.
+
+Déploiement :
+
+```bash
+supabase functions deploy ai-assistant
+supabase secrets set GEMINI_API_KEY=votre_cle_reelle
+```
+
+La clé Gemini ne doit **jamais** apparaître dans `.env` ni dans une
+variable préfixée `VITE_` — elle resterait alors visible dans le bundle
+frontend.
+
 ## Architecture
 
 ```

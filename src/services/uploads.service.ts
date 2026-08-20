@@ -45,9 +45,15 @@ class UploadsService {
   /**
    * Téléverse le document d'une commande d'impression/copie dans le bucket
    * privé dédié. Le chemin est préfixé par l'utilisateur pour que les
-   * policies Supabase Storage puissent restreindre l'accès à son propriétaire.
+   * policies Supabase Storage (voir 00023_create_storage_buckets.sql)
+   * puissent restreindre l'accès au propriétaire et au personnel COIN-IDEAL.
+   *
+   * Ce bucket est privé (cahier des charges : "stockage privé", "accès
+   * privé aux documents clients") — on ne récupère donc jamais d'URL
+   * publique ici. N'utiliser que le `path` retourné, et générer une URL
+   * signée à la demande via `getOrderDocumentUrl`.
    */
-  async uploadOrderDocument(userId: string, file: File): Promise<{ path: string; url: string }> {
+  async uploadOrderDocument(userId: string, file: File): Promise<{ path: string }> {
     const timestamp = Date.now()
     const filePath = `${userId}/${timestamp}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`
 
@@ -57,9 +63,22 @@ class UploadsService {
 
     if (uploadError) throw uploadError
 
-    const { data } = supabase.storage.from(STORAGE_BUCKETS.ORDER_DOCUMENTS).getPublicUrl(filePath)
+    return { path: filePath }
+  }
 
-    return { path: filePath, url: data.publicUrl }
+  /**
+   * URL signée et temporaire pour consulter un document de commande.
+   * `expiresInSeconds` reste court par défaut : cette URL est destinée à un
+   * affichage ponctuel (ex. panneau de traitement de commande), pas à être
+   * stockée ou partagée.
+   */
+  async getOrderDocumentUrl(path: string, expiresInSeconds = 300): Promise<string> {
+    const { data, error } = await supabase.storage
+      .from(STORAGE_BUCKETS.ORDER_DOCUMENTS)
+      .createSignedUrl(path, expiresInSeconds)
+
+    if (error) throw error
+    return data.signedUrl
   }
 
   async deleteFile(bucket: string, path: string): Promise<void> {

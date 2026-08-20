@@ -4,6 +4,8 @@ import { Card, CardContent, Badge, Button, Skeleton, EmptyState, ErrorState } fr
 import { useAuth } from "@/features/auth/hooks/use-auth"
 import { useServiceRequests } from "@/features/bookings/hooks/use-bookings"
 import { formatDate } from "@/utils/format"
+import { parseDocumentOrderMessage } from "@/features/document-orders/utils/parse-order-message"
+import { OrderMessageSummary } from "@/features/document-orders/components/order-message-summary"
 import type { RequestStatus } from "@/types"
 
 const TABS: { label: string; value: RequestStatus | "all" }[] = [
@@ -91,10 +93,11 @@ function DashboardRequestsPage() {
         <div className="space-y-3">
           {filtered.map((request) => {
             const config = statusConfig[request.status]
+            const orderPayload = parseDocumentOrderMessage(request.message)
             return (
               <Card key={request.id}>
-                <CardContent className="flex flex-col gap-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex items-center gap-4">
+                <CardContent className="flex flex-col gap-4 py-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="flex items-start gap-4">
                     <div className="rounded-full bg-gray-100 p-3">
                       <ClipboardList className="h-5 w-5 text-gray-600" />
                     </div>
@@ -108,10 +111,14 @@ function DashboardRequestsPage() {
                         )}
                         {formatDate(request.created_at)}
                       </p>
-                      {request.provider && (
-                        <p className="text-xs text-gray-400">
-                          Prestataire : {request.provider.first_name} {request.provider.last_name}
-                        </p>
+                      {orderPayload ? (
+                        <OrderMessageSummary payload={orderPayload} />
+                      ) : (
+                        request.provider && (
+                          <p className="text-xs text-gray-400">
+                            Prestataire : {request.provider.first_name} {request.provider.last_name}
+                          </p>
+                        )
                       )}
                     </div>
                   </div>
