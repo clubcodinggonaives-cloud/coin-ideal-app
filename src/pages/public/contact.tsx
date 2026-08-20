@@ -2,6 +2,7 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { Mail, Phone, MapPin, Send, CheckCircle } from "lucide-react"
 import { Button, Card, CardContent, Input, Textarea, Alert } from "@/components/ui"
+import { COMPANY } from "@/lib/constants"
 
 interface ContactFormData {
   name: string
@@ -33,7 +34,7 @@ function ContactPage() {
         <div className="mx-auto max-w-4xl text-center">
           <h1 className="text-4xl font-bold text-white sm:text-5xl">Contactez-nous</h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-primary-100">
-            Une question, une suggestion ou besoin d&apos;aide ? Notre equipe est la pour vous.
+            Une question, une commande ou besoin d&apos;aide ? Notre équipe est là pour vous.
           </p>
         </div>
       </section>
@@ -48,22 +49,24 @@ function ContactPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">Email</h3>
-                  <p className="mt-1 text-sm text-gray-500">support@coin-ideal.com</p>
+                  <p className="mt-1 text-sm text-gray-500">{COMPANY.email}</p>
                 </div>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardContent className="flex items-start gap-4 pt-6">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
-                  <Phone className="h-5 w-5" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">Telephone</h3>
-                  <p className="mt-1 text-sm text-gray-500">+225 01 02 03 04 05</p>
-                </div>
-              </CardContent>
-            </Card>
+            {COMPANY.phone && (
+              <Card>
+                <CardContent className="flex items-start gap-4 pt-6">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+                    <Phone className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">Téléphone</h3>
+                    <p className="mt-1 text-sm text-gray-500">{COMPANY.phone}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             <Card>
               <CardContent className="flex items-start gap-4 pt-6">
@@ -73,7 +76,7 @@ function ContactPage() {
                 <div>
                   <h3 className="font-semibold text-gray-900">Adresse</h3>
                   <p className="mt-1 text-sm text-gray-500">
-                    Abidjan, Cote d&apos;Ivoire
+                    {COMPANY.street}, {COMPANY.city}, {COMPANY.country}
                   </p>
                 </div>
               </CardContent>
@@ -85,13 +88,13 @@ function ContactPage() {
               <CardContent className="pt-6">
                 <h2 className="text-xl font-bold text-gray-900">Envoyez-nous un message</h2>
                 <p className="mt-1 text-sm text-gray-500">
-                  Remplissez le formulaire ci-dessous et nous vous repondrons dans les plus brefs delais.
+                  Remplissez le formulaire ci-dessous et nous vous répondrons dans les plus brefs délais.
                 </p>
 
                 {submitted && (
                   <Alert variant="success" className="mt-4" onClose={() => setSubmitted(false)}>
                     <CheckCircle className="h-4 w-4" />
-                    Votre message a ete envoye avec succes. Nous vous repondrons bientot.
+                    Votre message a été envoyé avec succès. Nous vous répondrons bientôt.
                   </Alert>
                 )}
 
@@ -133,7 +136,7 @@ function ContactPage() {
 
                   <Textarea
                     label="Message"
-                    placeholder="Decrivez votre demande en detail..."
+                    placeholder="Décrivez votre demande en détail..."
                     rows={6}
                     error={errors.message?.message}
                     {...register("message", {

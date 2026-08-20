@@ -21,25 +21,26 @@ function Navbar() {
 
   const navLinks = [
     { label: "Services", href: ROUTES.SERVICES },
-    { label: "Prestataires", href: ROUTES.PROVIDERS },
+    { label: "Tarifs", href: ROUTES.TARIFS },
+    { label: "Comment ça marche", href: ROUTES.HOW_IT_WORKS },
+    { label: "Vente d'eau", href: ROUTES.WATER },
     { label: "À propos", href: ROUTES.ABOUT },
+    { label: "Contact", href: ROUTES.CONTACT },
   ]
 
   return (
     <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
-      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link to={ROUTES.HOME} className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary-500 text-white font-bold text-sm">
-            CI
-          </div>
+        <Link to={ROUTES.HOME} className="flex shrink-0 items-center gap-2">
+          <img src="/logo.png" alt="COIN-IDEAL Multi-Service" className="h-10 w-10 object-contain" />
           <span className="hidden text-lg font-bold text-gray-900 sm:block">
             COIN-IDEAL
           </span>
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-6 lg:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -53,6 +54,9 @@ function Navbar() {
 
         {/* Right section */}
         <div className="flex items-center gap-3">
+          <Link to={ROUTES.ORDER} className="hidden sm:block">
+            <Button size="default">Commander</Button>
+          </Link>
           {isAuthenticated ? (
             <>
               {/* Notifications */}
@@ -162,7 +166,7 @@ function Navbar() {
           {/* Mobile menu button */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 md:hidden"
+            className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 lg:hidden"
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -171,8 +175,11 @@ function Navbar() {
 
       {/* Mobile nav */}
       {mobileOpen && (
-        <div className="border-t border-gray-200 bg-white md:hidden">
+        <div className="border-t border-gray-200 bg-white lg:hidden">
           <div className="space-y-1 px-4 py-3">
+            <Link to={ROUTES.ORDER} className="block sm:hidden" onClick={() => setMobileOpen(false)}>
+              <Button className="w-full">Commander</Button>
+            </Link>
             {navLinks.map((link) => (
               <Link
                 key={link.href}

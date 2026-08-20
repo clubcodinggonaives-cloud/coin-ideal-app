@@ -42,6 +42,26 @@ class UploadsService {
     return data.publicUrl
   }
 
+  /**
+   * Téléverse le document d'une commande d'impression/copie dans le bucket
+   * privé dédié. Le chemin est préfixé par l'utilisateur pour que les
+   * policies Supabase Storage puissent restreindre l'accès à son propriétaire.
+   */
+  async uploadOrderDocument(userId: string, file: File): Promise<{ path: string; url: string }> {
+    const timestamp = Date.now()
+    const filePath = `${userId}/${timestamp}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`
+
+    const { error: uploadError } = await supabase.storage
+      .from(STORAGE_BUCKETS.ORDER_DOCUMENTS)
+      .upload(filePath, file)
+
+    if (uploadError) throw uploadError
+
+    const { data } = supabase.storage.from(STORAGE_BUCKETS.ORDER_DOCUMENTS).getPublicUrl(filePath)
+
+    return { path: filePath, url: data.publicUrl }
+  }
+
   async deleteFile(bucket: string, path: string): Promise<void> {
     const { error } = await supabase.storage.from(bucket).remove([path])
 

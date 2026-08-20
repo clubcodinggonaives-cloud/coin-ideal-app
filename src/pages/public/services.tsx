@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useCallback } from "react"
 import { useSearchParams } from "react-router-dom"
 import { SlidersHorizontal, X } from "lucide-react"
 import { Button, Select, Skeleton, EmptyState } from "@/components/ui"
@@ -10,11 +10,11 @@ import type { SearchFilters } from "@/types"
 
 const priceRanges = [
   { value: "", label: "Tous les prix" },
-  { value: "0-5000", label: "Moins de 5 000 FCFA" },
-  { value: "5000-20000", label: "5 000 - 20 000 FCFA" },
-  { value: "20000-50000", label: "20 000 - 50 000 FCFA" },
-  { value: "50000-100000", label: "50 000 - 100 000 FCFA" },
-  { value: "100000+", label: "Plus de 100 000 FCFA" },
+  { value: "0-100", label: "Moins de 100 HTG" },
+  { value: "100-500", label: "100 - 500 HTG" },
+  { value: "500-2000", label: "500 - 2 000 HTG" },
+  { value: "2000-10000", label: "2 000 - 10 000 HTG" },
+  { value: "10000+", label: "Plus de 10 000 HTG" },
 ]
 
 const ratingOptions = [
@@ -34,7 +34,7 @@ const sortOptions = [
 
 function parsePriceRange(value: string): { min?: number; max?: number } {
   if (!value) return {}
-  if (value === "100000+") return { min: 100000 }
+  if (value === "10000+") return { min: 10000 }
   const [min, max] = value.split("-").map(Number)
   return { min, max }
 }
@@ -54,6 +54,16 @@ function ServicesPage() {
 
   const [localQuery, setLocalQuery] = useState(query)
   const [localLocation, setLocalLocation] = useState(location)
+  // Garde la dernière valeur d'URL vue, pour détecter un changement externe
+  // (navigation précédente/suivante) sans passer par un effet : la mise à
+  // jour a lieu pendant le rendu plutôt qu'après, ce qui évite un rendu
+  // en cascade inutile.
+  const [syncedFromUrl, setSyncedFromUrl] = useState({ query, location })
+  if (syncedFromUrl.query !== query || syncedFromUrl.location !== location) {
+    setSyncedFromUrl({ query, location })
+    setLocalQuery(query)
+    setLocalLocation(location)
+  }
 
   const { data: categories } = useCategories()
 
@@ -92,11 +102,6 @@ function ServicesPage() {
     },
     [setSearchParams]
   )
-
-  useEffect(() => {
-    setLocalQuery(query)
-    setLocalLocation(location)
-  }, [query, location])
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault()

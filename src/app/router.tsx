@@ -26,10 +26,14 @@ const Home = lazy(() => import("@/pages/public/home"))
 const Services = lazy(() => import("@/pages/public/services"))
 const ServiceDetail = lazy(() => import("@/pages/public/service-detail"))
 const Category = lazy(() => import("@/pages/public/category"))
+const Pricing = lazy(() => import("@/pages/public/pricing"))
+const HowItWorks = lazy(() => import("@/pages/public/how-it-works"))
+const Water = lazy(() => import("@/pages/public/water"))
 const Providers = lazy(() => import("@/pages/public/providers"))
 const ProviderDetail = lazy(() => import("@/pages/public/provider-detail"))
 const About = lazy(() => import("@/pages/public/about"))
 const Contact = lazy(() => import("@/pages/public/contact"))
+const DocumentOrder = lazy(() => import("@/pages/order/document"))
 const NotFound = lazy(() => import("@/pages/not-found"))
 
 // Auth pages
@@ -77,6 +81,10 @@ export const router = createBrowserRouter([
       { path: "/services", element: <SuspenseWrapper><Services /></SuspenseWrapper> },
       { path: "/services/:category", element: <SuspenseWrapper><Category /></SuspenseWrapper> },
       { path: "/service/:id", element: <SuspenseWrapper><ServiceDetail /></SuspenseWrapper> },
+      { path: "/tarifs", element: <SuspenseWrapper><Pricing /></SuspenseWrapper> },
+      { path: "/comment-ca-marche", element: <SuspenseWrapper><HowItWorks /></SuspenseWrapper> },
+      { path: "/vente-eau", element: <SuspenseWrapper><Water /></SuspenseWrapper> },
+      { path: "/commander", element: <SuspenseWrapper><DocumentOrder /></SuspenseWrapper> },
       { path: "/providers", element: <SuspenseWrapper><Providers /></SuspenseWrapper> },
       { path: "/provider/:id", element: <SuspenseWrapper><ProviderDetail /></SuspenseWrapper> },
       { path: "/about", element: <SuspenseWrapper><About /></SuspenseWrapper> },

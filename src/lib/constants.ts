@@ -1,12 +1,43 @@
 export const APP_NAME = "COIN-IDEAL"
-export const APP_DESCRIPTION = "Plateforme multi-services - Trouvez les meilleurs prestataires pour tous vos besoins"
+export const APP_DESCRIPTION = "Impression, copie et vente d'eau à Gonaïves, Haïti — commandez en ligne, payez, puis retirez ou faites-vous livrer."
 export const APP_URL = import.meta.env.VITE_SUPABASE_URL ? "" : "http://localhost:5173"
+
+/**
+ * Coordonnées officielles de l'entreprise, telles que définies dans le
+ * cahier des charges. Toute valeur non confirmée reste vide plutôt que
+ * d'être inventée — les écrans qui les consomment doivent gérer ce cas
+ * (ex. masquer le champ ou afficher "à venir") au lieu d'afficher une
+ * fausse coordonnée.
+ */
+export const COMPANY = {
+  name: "COIN-IDEAL Multi-Service",
+  owner: "GUY Petit-Homme",
+  street: "Ruelle Sajous",
+  city: "Gonaïves",
+  country: "Haïti",
+  email: "contact@coin-ideal.com",
+  phone: "", // TODO: numéro de téléphone officiel à renseigner
+  whatsapp: "", // TODO: numéro WhatsApp officiel à renseigner
+} as const
+
+export const CURRENCY = "HTG"
+
+export const PAYMENT_METHODS = [
+  { value: "cash", label: "Espèces" },
+  { value: "moncash", label: "MonCash" },
+  { value: "natcash", label: "NatCash" },
+  { value: "transfer", label: "Virement" },
+] as const
 
 export const ROUTES = {
   HOME: "/",
   SERVICES: "/services",
   SERVICE_DETAIL: "/service",
   CATEGORY: "/services",
+  TARIFS: "/tarifs",
+  HOW_IT_WORKS: "/comment-ca-marche",
+  WATER: "/vente-eau",
+  ORDER: "/commander",
   PROVIDERS: "/providers",
   PROVIDER_DETAIL: "/provider",
   ABOUT: "/about",
@@ -49,7 +80,12 @@ export const STORAGE_BUCKETS = {
   AVATARS: "avatars",
   SERVICE_IMAGES: "service-images",
   PROVIDER_DOCUMENTS: "provider-documents",
+  ORDER_DOCUMENTS: "order-documents",
 } as const
+
+/** Formats de fichiers acceptés pour une commande d'impression/copie (cahier des charges §4.2). */
+export const ORDER_FILE_ACCEPT = [".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png"] as const
+export const ORDER_FILE_MAX_SIZE_MB = 20
 
 export const PAGE_SIZE = 12
 

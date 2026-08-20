@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
-import { Mail, Phone } from "lucide-react"
-import { ROUTES, APP_NAME } from "@/lib/constants"
+import { Mail, Phone, MapPin } from "lucide-react"
+import { ROUTES, APP_NAME, COMPANY } from "@/lib/constants"
 
 function Footer() {
   const currentYear = new Date().getFullYear()
@@ -9,9 +9,10 @@ function Footer() {
     {
       title: "Services",
       links: [
-        { label: "Tous les services", href: ROUTES.SERVICES },
-        { label: "Prestataires", href: ROUTES.PROVIDERS },
-        { label: "Comment ça marche", href: ROUTES.ABOUT },
+        { label: "Impression & copie", href: ROUTES.SERVICES },
+        { label: "Vente d'eau", href: ROUTES.WATER },
+        { label: "Tarifs", href: ROUTES.TARIFS },
+        { label: "Comment ça marche", href: ROUTES.HOW_IT_WORKS },
       ],
     },
     {
@@ -19,7 +20,7 @@ function Footer() {
       links: [
         { label: "À propos", href: ROUTES.ABOUT },
         { label: "Contact", href: ROUTES.CONTACT },
-        { label: "Devenir prestataire", href: ROUTES.REGISTER },
+        { label: "Espace client", href: ROUTES.DASHBOARD },
       ],
     },
     {
@@ -39,23 +40,28 @@ function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link to={ROUTES.HOME} className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary-500 text-white font-bold text-sm">
-                CI
-              </div>
+              <img src="/logo.png" alt={APP_NAME} className="h-10 w-10 object-contain" />
               <span className="text-lg font-bold text-gray-900">{APP_NAME}</span>
             </Link>
             <p className="mt-4 max-w-xs text-sm text-gray-500">
-              La plateforme multi-services qui vous connecte avec les meilleurs prestataires près de chez vous.
+              Impression, copie et vente d'eau à {COMPANY.city}, {COMPANY.country}. Commandez en ligne,
+              retirez au local ou faites-vous livrer.
             </p>
             <div className="mt-4 space-y-2">
-              <a href="mailto:contact@coin-ideal.com" className="flex items-center gap-2 text-sm text-gray-500 hover:text-primary-600">
+              <a href={`mailto:${COMPANY.email}`} className="flex items-center gap-2 text-sm text-gray-500 hover:text-primary-600">
                 <Mail className="h-4 w-4" />
-                contact@coin-ideal.com
+                {COMPANY.email}
               </a>
-              <a href="tel:+22500000000" className="flex items-center gap-2 text-sm text-gray-500 hover:text-primary-600">
-                <Phone className="h-4 w-4" />
-                +225 00 00 00 00
-              </a>
+              {COMPANY.phone && (
+                <a href={`tel:${COMPANY.phone}`} className="flex items-center gap-2 text-sm text-gray-500 hover:text-primary-600">
+                  <Phone className="h-4 w-4" />
+                  {COMPANY.phone}
+                </a>
+              )}
+              <p className="flex items-center gap-2 text-sm text-gray-500">
+                <MapPin className="h-4 w-4 shrink-0" />
+                {COMPANY.street}, {COMPANY.city}, {COMPANY.country}
+              </p>
             </div>
           </div>
 
