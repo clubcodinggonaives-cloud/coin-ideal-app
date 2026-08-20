@@ -1,0 +1,2 @@
+-- Enums are defined inline as CHECK constraints within their respective table definitions.
+-- No standalone enum types are created to keep migrations flexible and avoid ALTER TYPE issues.

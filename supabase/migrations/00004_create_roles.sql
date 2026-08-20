@@ -1,0 +1,3 @@
+-- Roles are handled via the CHECK constraint on the profiles.role column.
+-- Valid roles: 'client', 'provider', 'admin'.
+-- No separate roles table is needed; role-based access is enforced through RLS policies.
