@@ -54,7 +54,7 @@ function Navbar() {
 
         {/* Right section */}
         <div className="flex items-center gap-3">
-          <Link to={ROUTES.ORDER} className="hidden sm:block">
+          <Link to={ROUTES.ORDER} className="hidden lg:block">
             <Button size="default">Commander</Button>
           </Link>
           {isAuthenticated ? (
@@ -153,7 +153,7 @@ function Navbar() {
               </div>
             </>
           ) : (
-            <div className="hidden items-center gap-2 sm:flex">
+            <div className="hidden items-center gap-2 lg:flex">
               <Button variant="ghost" onClick={() => navigate(ROUTES.LOGIN)}>
                 Connexion
               </Button>
@@ -177,7 +177,7 @@ function Navbar() {
       {mobileOpen && (
         <div className="border-t border-gray-200 bg-white lg:hidden">
           <div className="space-y-1 px-4 py-3">
-            <Link to={ROUTES.ORDER} className="block sm:hidden" onClick={() => setMobileOpen(false)}>
+            <Link to={ROUTES.ORDER} className="block lg:hidden" onClick={() => setMobileOpen(false)}>
               <Button className="w-full">Commander</Button>
             </Link>
             {navLinks.map((link) => (

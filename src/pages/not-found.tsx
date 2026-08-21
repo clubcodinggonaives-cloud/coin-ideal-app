@@ -8,10 +8,10 @@ function NotFoundPage() {
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-4">
       <div className="text-center">
         <div className="relative">
-          <span className="text-[12rem] font-bold leading-none text-primary-100">404</span>
+          <span className="text-[6rem] font-bold leading-none text-primary-100 sm:text-[9rem] lg:text-[12rem]">404</span>
           <div className="absolute inset-0 flex items-center justify-center">
             <svg
-              className="h-32 w-32 text-primary-200"
+              className="h-20 w-20 text-primary-200 sm:h-28 sm:w-28 lg:h-32 lg:w-32"
               viewBox="0 0 200 200"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -37,15 +37,15 @@ function NotFoundPage() {
 
         <h1 className="mt-2 text-3xl font-bold text-gray-900">Page introuvable</h1>
         <p className="mx-auto mt-4 max-w-md text-gray-500">
-          Desole, la page que vous recherchez n&apos;existe pas ou a ete deplacee.
-          Verifiez l&apos;adresse ou revenez a l&apos;accueil.
+          Désolé, la page que vous recherchez n&apos;existe pas ou a été déplacée.
+          Vérifiez l&apos;adresse ou revenez à l&apos;accueil.
         </p>
 
         <div className="mt-8">
           <Link to={ROUTES.HOME}>
             <Button size="lg">
               <Home className="h-5 w-5" />
-              Retour a l&apos;accueil
+              Retour à l&apos;accueil
             </Button>
           </Link>
         </div>
