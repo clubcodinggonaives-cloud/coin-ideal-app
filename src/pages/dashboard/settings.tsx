@@ -126,7 +126,7 @@ function DashboardSettingsPage() {
               type="tel"
               {...register("phone")}
               error={errors.phone?.message}
-              placeholder="+225 XX XX XX XX"
+              placeholder="+509 XX XX XXXX"
             />
 
             <Textarea

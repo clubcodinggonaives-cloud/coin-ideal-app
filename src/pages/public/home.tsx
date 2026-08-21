@@ -88,8 +88,13 @@ function HomePage() {
 
   return (
     <div>
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800 px-4 py-20 sm:px-6 lg:px-8">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMS41IiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDUpIi8+PC9zdmc+')] opacity-40" />
+      <section className="relative overflow-hidden bg-primary-800 px-4 py-20 sm:px-6 lg:px-8">
+        <img
+          src="/hero.png"
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-900/95 via-primary-800/90 to-primary-900/95" />
         <div className="relative mx-auto max-w-4xl text-center">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-primary-100">
             <MapPin className="h-3.5 w-3.5" />
@@ -215,12 +220,12 @@ function HomePage() {
         </div>
         <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {steps.map((step, index) => (
-            <div key={index} className="relative text-center">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-100 text-primary-600">
+            <div key={index} className="text-center">
+              <div className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-100 text-primary-600">
                 <step.icon className="h-8 w-8" />
-              </div>
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 text-5xl font-bold text-primary-100">
-                {index + 1}
+                <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary-600 text-xs font-bold text-white ring-2 ring-white">
+                  {index + 1}
+                </span>
               </div>
               <h3 className="mt-6 text-lg font-semibold text-gray-900">{step.title}</h3>
               <p className="mt-2 text-sm text-gray-500">{step.description}</p>

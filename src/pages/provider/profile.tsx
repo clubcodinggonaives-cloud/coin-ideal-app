@@ -106,7 +106,7 @@ function ProviderProfilePage() {
               label="Nom du business"
               {...register("businessName")}
               error={errors.businessName?.message}
-              placeholder="Ex: Services Pro Abidjan"
+              placeholder="Ex: COIN-IDEAL Multi-Service"
             />
 
             <Textarea
@@ -136,7 +136,7 @@ function ProviderProfilePage() {
                 label="Localisation"
                 {...register("location")}
                 error={errors.location?.message}
-                placeholder="Ex: Abidjan, Cocody"
+                placeholder="Ex: Ruelle Sajous, Gonaïves"
               />
             </div>
 

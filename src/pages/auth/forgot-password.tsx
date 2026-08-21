@@ -35,9 +35,7 @@ function ForgotPasswordPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mb-4 flex justify-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-500 text-white">
-              <span className="text-lg font-bold">CI</span>
-            </div>
+            <img src="/logo.png" alt="COIN-IDEAL Multi-Service" className="h-14 w-14 object-contain" />
           </div>
           <CardTitle className="text-2xl">Mot de passe oublié</CardTitle>
           <p className="mt-2 text-sm text-gray-500">

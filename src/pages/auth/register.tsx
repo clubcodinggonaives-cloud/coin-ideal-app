@@ -46,9 +46,7 @@ function RegisterPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mb-4 flex justify-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-500 text-white">
-              <span className="text-lg font-bold">CI</span>
-            </div>
+            <img src="/logo.png" alt="COIN-IDEAL Multi-Service" className="h-14 w-14 object-contain" />
           </div>
           <CardTitle className="text-2xl">Créer un compte</CardTitle>
           <p className="mt-2 text-sm text-gray-500">
@@ -92,7 +90,7 @@ function RegisterPage() {
             <Input
               label="Téléphone (optionnel)"
               type="tel"
-              placeholder="+225 01 02 03 04"
+              placeholder="+509 34 56 7890"
               leftIcon={<Phone className="h-4 w-4" />}
               error={errors.phone?.message}
               {...register("phone")}

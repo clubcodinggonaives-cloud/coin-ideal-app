@@ -148,7 +148,7 @@ function ServiceNewPage() {
               label="Localisation"
               {...register("location")}
               error={errors.location?.message}
-              placeholder="Ex: Abidjan, Cocody"
+              placeholder="Ex: Ruelle Sajous, Gonaïves"
             />
 
             <Input
