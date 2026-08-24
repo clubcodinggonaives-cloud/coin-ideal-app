@@ -44,6 +44,7 @@ const ResetPassword = lazy(() => import("@/pages/auth/reset-password"))
 
 // Dashboard pages
 const DashboardOverview = lazy(() => import("@/pages/dashboard/overview"))
+const DashboardOrders = lazy(() => import("@/pages/dashboard/orders"))
 const DashboardRequests = lazy(() => import("@/pages/dashboard/requests"))
 const DashboardBookings = lazy(() => import("@/pages/dashboard/bookings"))
 const DashboardFavorites = lazy(() => import("@/pages/dashboard/favorites"))
@@ -53,6 +54,7 @@ const DashboardSettings = lazy(() => import("@/pages/dashboard/settings"))
 
 // Provider pages
 const ProviderDashboard = lazy(() => import("@/pages/provider/dashboard"))
+const ProviderOrders = lazy(() => import("@/pages/provider/orders"))
 const ProviderServices = lazy(() => import("@/pages/provider/services"))
 const ProviderServiceNew = lazy(() => import("@/pages/provider/service-new"))
 const ProviderServiceEdit = lazy(() => import("@/pages/provider/service-edit"))
@@ -68,6 +70,8 @@ const AdminUsers = lazy(() => import("@/pages/admin/users"))
 const AdminProviders = lazy(() => import("@/pages/admin/providers"))
 const AdminServices = lazy(() => import("@/pages/admin/services"))
 const AdminCategories = lazy(() => import("@/pages/admin/categories"))
+const AdminPricing = lazy(() => import("@/pages/admin/pricing"))
+const AdminOrders = lazy(() => import("@/pages/admin/orders"))
 const AdminRequests = lazy(() => import("@/pages/admin/requests"))
 const AdminReviews = lazy(() => import("@/pages/admin/reviews"))
 const AdminSettings = lazy(() => import("@/pages/admin/settings"))
@@ -104,6 +108,7 @@ export const router = createBrowserRouter([
     element: <SuspenseWrapper><DashboardLayout variant="client" /></SuspenseWrapper>,
     children: [
       { index: true, element: <SuspenseWrapper><DashboardOverview /></SuspenseWrapper> },
+      { path: "orders", element: <SuspenseWrapper><DashboardOrders /></SuspenseWrapper> },
       { path: "requests", element: <SuspenseWrapper><DashboardRequests /></SuspenseWrapper> },
       { path: "bookings", element: <SuspenseWrapper><DashboardBookings /></SuspenseWrapper> },
       { path: "favorites", element: <SuspenseWrapper><DashboardFavorites /></SuspenseWrapper> },
@@ -119,6 +124,7 @@ export const router = createBrowserRouter([
     element: <SuspenseWrapper><DashboardLayout variant="provider" /></SuspenseWrapper>,
     children: [
       { path: "dashboard", element: <SuspenseWrapper><ProviderDashboard /></SuspenseWrapper> },
+      { path: "orders", element: <SuspenseWrapper><ProviderOrders /></SuspenseWrapper> },
       { path: "services", element: <SuspenseWrapper><ProviderServices /></SuspenseWrapper> },
       { path: "services/new", element: <SuspenseWrapper><ProviderServiceNew /></SuspenseWrapper> },
       { path: "services/:id/edit", element: <SuspenseWrapper><ProviderServiceEdit /></SuspenseWrapper> },
@@ -140,6 +146,8 @@ export const router = createBrowserRouter([
       { path: "providers", element: <SuspenseWrapper><AdminProviders /></SuspenseWrapper> },
       { path: "services", element: <SuspenseWrapper><AdminServices /></SuspenseWrapper> },
       { path: "categories", element: <SuspenseWrapper><AdminCategories /></SuspenseWrapper> },
+      { path: "pricing", element: <SuspenseWrapper><AdminPricing /></SuspenseWrapper> },
+      { path: "orders", element: <SuspenseWrapper><AdminOrders /></SuspenseWrapper> },
       { path: "requests", element: <SuspenseWrapper><AdminRequests /></SuspenseWrapper> },
       { path: "reviews", element: <SuspenseWrapper><AdminReviews /></SuspenseWrapper> },
       { path: "settings", element: <SuspenseWrapper><AdminSettings /></SuspenseWrapper> },

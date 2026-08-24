@@ -1,7 +1,8 @@
 import { Link, useNavigate } from "react-router-dom"
-import { Printer, MessageCircle } from "lucide-react"
+import { Printer, MessageCircle, Truck, Layers } from "lucide-react"
 import { Button, Card, CardContent, Skeleton, EmptyState, ErrorState } from "@/components/ui"
 import { useServices } from "@/features/services/hooks/use-services"
+import { usePricingConfig } from "@/features/document-orders/hooks/use-pricing-config"
 import { formatCurrency } from "@/utils/format"
 import { ROUTES } from "@/lib/constants"
 import type { Service } from "@/types"
@@ -43,6 +44,7 @@ function PricingPage() {
   const navigate = useNavigate()
   const { data, isLoading, isError, refetch } = useServices({ pageSize: 50 })
   const services = data?.data ?? []
+  const { data: pricingConfig } = usePricingConfig()
 
   const normalize = (value: string) => value.toLowerCase()
   const printing = services.filter((s) => normalize(s.category?.name ?? "").includes("impression"))
@@ -82,6 +84,41 @@ function PricingPage() {
             <ServicePricingSection title="Impression" services={printing} />
             <ServicePricingSection title="Copie" services={copying} />
             <ServicePricingSection title="Autres services" services={other} />
+          </div>
+        )}
+
+        {pricingConfig && pricingConfig.finishingOptions.length > 0 && (
+          <div className="mt-10">
+            <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-900">
+              <Layers className="h-5 w-5 text-primary-600" />
+              Options de finition
+            </h2>
+            <div className="mt-4 space-y-3">
+              {pricingConfig.finishingOptions.map((option) => (
+                <Card key={option.id}>
+                  <CardContent className="flex items-center justify-between pt-6">
+                    <span className="font-medium text-gray-900">{option.label}</span>
+                    <span className="font-semibold text-primary-700">+{formatCurrency(option.cost)}</span>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {pricingConfig && (
+          <div className="mt-10">
+            <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-900">
+              <Truck className="h-5 w-5 text-primary-600" />
+              Livraison
+            </h2>
+            <Card className="mt-4">
+              <CardContent className="pt-6 text-sm text-gray-600">
+                Retrait au local : gratuit. Livraison à domicile ou au bureau :{" "}
+                <span className="font-semibold text-gray-900">{formatCurrency(pricingConfig.flatDeliveryFee)}</span>{" "}
+                (frais fixe — des tarifs par zone pourront être ajoutés par COIN-IDEAL).
+              </CardContent>
+            </Card>
           </div>
         )}
 

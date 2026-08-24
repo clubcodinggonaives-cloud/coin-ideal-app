@@ -8,7 +8,11 @@ interface AuthContextType {
   isAuthenticated: boolean
   isLoading: boolean
   signIn: (email: string, password: string) => Promise<void>
-  signUp: (email: string, password: string, metadata: { firstName: string; lastName: string; phone?: string; role?: string }) => Promise<void>
+  signUp: (
+    email: string,
+    password: string,
+    metadata: { firstName: string; lastName: string; phone?: string; role?: string }
+  ) => Promise<{ emailConfirmationRequired: boolean }>
   signOut: () => Promise<void>
   signInWithGoogle: () => Promise<void>
   refreshProfile: () => Promise<void>
@@ -64,12 +68,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const signUp = async (email: string, password: string, metadata: { firstName: string; lastName: string; phone?: string; role?: string }) => {
+  const signUp = async (
+    email: string,
+    password: string,
+    metadata: { firstName: string; lastName: string; phone?: string; role?: string }
+  ) => {
     const data = await authService.signUp(email, password, metadata)
     if (data.user) {
       setUser({ id: data.user.id, email: data.user.email || "" })
       await loadProfile(data.user.id)
     }
+    // supabase-js returns session: null when email confirmation is required
+    // (project-dependent — disabled on this local stack, but a real project
+    // may have it on). The caller must not assume the user is logged in.
+    return { emailConfirmationRequired: !data.session }
   }
 
   const signOut = async () => {

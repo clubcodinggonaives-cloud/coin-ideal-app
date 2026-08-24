@@ -11,6 +11,7 @@ export type NotificationType =
   | "new_message"
   | "new_review"
   | "admin_notification"
+  | "order_status_change"
 
 export interface Profile {
   id: string
@@ -225,6 +226,128 @@ export interface AdminLog {
   target_id: string
   details: Record<string, unknown> | null
   created_at: string
+}
+
+// =============================================================================
+// Orders / payments / configurable pricing (supabase/migrations/00028-00029)
+// =============================================================================
+export type OrderStatus =
+  | "en_attente"
+  | "confirmee"
+  | "en_preparation"
+  | "prete"
+  | "en_livraison"
+  | "livree"
+  | "retiree"
+  | "annulee"
+
+export type OrderColor = "bw" | "color"
+export type OrderSided = "simplex" | "duplex"
+export type OrderReceptionMethod = "pickup" | "delivery"
+export type PaymentMethod = "cash" | "moncash" | "natcash" | "transfer"
+export type PaymentStatus = "pending" | "confirmed" | "failed" | "refunded"
+
+export interface FinishingOption {
+  id: string
+  label: string
+  cost: number
+  is_active: boolean
+  created_at: string
+}
+
+export interface DeliveryZone {
+  id: string
+  name: string
+  fee: number
+  is_active: boolean
+  created_at: string
+}
+
+export interface Setting {
+  key: string
+  value: unknown
+  description: string | null
+  updated_at: string
+}
+
+export interface OrderItemFinishing {
+  order_item_id: string
+  finishing_id: string
+  cost: number
+  finishing_option?: FinishingOption
+}
+
+export interface OrderItem {
+  id: string
+  order_id: string
+  file_path: string | null
+  file_name: string | null
+  pages: number
+  copies: number
+  color: OrderColor
+  sided: OrderSided
+  unit_price: number
+  line_total: number
+  created_at: string
+  finishings?: OrderItemFinishing[]
+}
+
+export interface OrderStatusHistoryEntry {
+  id: string
+  order_id: string
+  status: string
+  note: string | null
+  changed_by: string | null
+  created_at: string
+}
+
+export interface Payment {
+  id: string
+  order_id: string
+  amount: number
+  method: PaymentMethod
+  reference: string | null
+  status: PaymentStatus
+  recorded_by: string | null
+  paid_at: string | null
+  created_at: string
+}
+
+export interface Order {
+  id: string
+  client_id: string
+  service_id: string
+  status: OrderStatus
+  reception_method: OrderReceptionMethod
+  delivery_address_id: string | null
+  delivery_zone_id: string | null
+  delivery_fee: number
+  subtotal: number
+  total: number
+  notes: string | null
+  preferred_payment_method: PaymentMethod | null
+  cancelled_reason: string | null
+  ready_at: string | null
+  completed_at: string | null
+  created_at: string
+  updated_at: string
+  service?: Service
+  items?: OrderItem[]
+  status_history?: OrderStatusHistoryEntry[]
+  payments?: Payment[]
+  delivery_address?: Address
+  client?: Profile
+}
+
+/** Input shape for a single line of `create_order()` — see orders.service.ts. */
+export interface CreateOrderItemInput {
+  pages: number
+  copies: number
+  color: OrderColor
+  sided: OrderSided
+  finishing_ids: string[]
+  file_path?: string | null
+  file_name?: string | null
 }
 
 export interface PaginatedResponse<T> {

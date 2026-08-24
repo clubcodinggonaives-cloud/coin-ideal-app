@@ -5,6 +5,7 @@ import {
   Star,
   AlertTriangle,
   Shield,
+  Package,
 } from "lucide-react"
 import {
   Card,
@@ -32,6 +33,7 @@ const typeIcons: Record<NotificationType, typeof Bell> = {
   new_message: MessageSquare,
   new_review: Star,
   admin_notification: Shield,
+  order_status_change: Package,
 }
 
 const typeColors: Record<NotificationType, string> = {
@@ -43,6 +45,7 @@ const typeColors: Record<NotificationType, string> = {
   new_message: "text-blue-600 bg-blue-50",
   new_review: "text-amber-600 bg-amber-50",
   admin_notification: "text-purple-600 bg-purple-50",
+  order_status_change: "text-primary-600 bg-primary-50",
 }
 
 function NotificationsSkeleton() {

@@ -38,14 +38,25 @@ export const INITIAL_ORDER_STATE: DocumentOrderState = {
   notes: "",
 }
 
-export const FINISHING_OPTIONS: FinishingOption[] = [
+/**
+ * Valeurs de repli UNIQUEMENT — depuis supabase/migrations/00028-00029, la
+ * source de vérité est en base (`finishing_options`, `settings`), lue via
+ * `usePricingConfig()` (features/document-orders/hooks/use-pricing-config.ts).
+ * Ces constantes ne servent plus que dans deux cas :
+ *   1. `usePricingConfig()` retombe dessus si la requête Supabase échoue ou
+ *      renvoie une table vide (voir ce hook) ;
+ *   2. `order-message-summary.tsx` les utilise pour décoder d'anciennes
+ *      commandes historiques stockées en JSON dans `service_requests.message`
+ *      (avant 00028) — ces commandes ont été tarifées avec CES valeurs à
+ *      l'époque, donc les remplacer par les tarifs live fausserait leur
+ *      affichage historique.
+ * Ne plus les utiliser comme source de prix pour une NOUVELLE commande.
+ */
+export const FALLBACK_FINISHING_OPTIONS: FinishingOption[] = [
   { id: "binding", label: "Reliure", cost: 150 },
   { id: "lamination", label: "Plastification", cost: 100 },
   { id: "stapling", label: "Agrafage", cost: 25 },
 ]
 
-/** Frais de livraison forfaitaire (HTG). À remplacer par un calcul par zone quand celui-ci sera configurable. */
-export const FLAT_DELIVERY_FEE = 250
-
-/** Surcharge appliquée par page lorsque l'impression est en couleur plutôt qu'en noir et blanc. */
-export const COLOR_SURCHARGE_RATIO = 1.6
+export const FALLBACK_DELIVERY_FEE = 250
+export const FALLBACK_COLOR_SURCHARGE_RATIO = 1.6

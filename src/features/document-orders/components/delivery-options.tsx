@@ -1,15 +1,16 @@
 import { MapPin, Truck } from "lucide-react"
 import { Input, Select } from "@/components/ui"
 import { COMPANY, PAYMENT_METHODS } from "@/lib/constants"
-import { FLAT_DELIVERY_FEE, type DocumentOrderState } from "@/features/document-orders/types"
+import type { DocumentOrderState } from "@/features/document-orders/types"
 
 interface DeliveryOptionsProps {
   order: DocumentOrderState
+  deliveryFee: number
   onChange: (patch: Partial<DocumentOrderState>) => void
   addressError?: string
 }
 
-function DeliveryOptions({ order, onChange, addressError }: DeliveryOptionsProps) {
+function DeliveryOptions({ order, deliveryFee, onChange, addressError }: DeliveryOptionsProps) {
   return (
     <div className="space-y-6">
       <div>
@@ -54,7 +55,7 @@ function DeliveryOptions({ order, onChange, addressError }: DeliveryOptionsProps
             <Truck className="mt-0.5 h-4 w-4 shrink-0 text-primary-600" />
             <span>
               <span className="block font-medium text-gray-900">Livraison</span>
-              <span className="text-gray-500">Domicile ou bureau — {FLAT_DELIVERY_FEE} HTG</span>
+              <span className="text-gray-500">Domicile ou bureau — {deliveryFee} HTG</span>
             </span>
           </label>
         </div>

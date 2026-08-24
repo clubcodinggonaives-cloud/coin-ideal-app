@@ -1,18 +1,19 @@
 import { FileText, MapPin, Truck, Wallet } from "lucide-react"
 import { formatCurrency } from "@/utils/format"
 import { COMPANY, PAYMENT_METHODS } from "@/lib/constants"
-import { FINISHING_OPTIONS, type DocumentOrderState } from "@/features/document-orders/types"
-import type { Service } from "@/types"
+import type { DocumentOrderState } from "@/features/document-orders/types"
+import type { FinishingOption, Service } from "@/types"
 
 interface OrderSummaryProps {
   order: DocumentOrderState
   service: Service | undefined
+  finishingOptions: Pick<FinishingOption, "id" | "label">[]
   total: number
 }
 
-function OrderSummary({ order, service, total }: OrderSummaryProps) {
+function OrderSummary({ order, service, finishingOptions, total }: OrderSummaryProps) {
   const finishings = order.finishingIds
-    .map((id) => FINISHING_OPTIONS.find((f) => f.id === id)?.label)
+    .map((id) => finishingOptions.find((f) => f.id === id)?.label)
     .filter(Boolean)
 
   const paymentLabel = PAYMENT_METHODS.find((m) => m.value === order.paymentMethod)?.label

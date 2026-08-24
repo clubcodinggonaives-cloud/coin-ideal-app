@@ -2,6 +2,28 @@ import { supabase } from "@/services/supabase/client"
 import type { Service, SearchFilters, PaginatedResponse } from "@/types"
 import { PAGE_SIZE } from "@/lib/constants"
 
+const SERVICE_SELECT =
+  "*, provider:provider_profiles(*), category:categories(*), service_images(url, sort_order)"
+
+/**
+ * `service_images` existe (table + RLS + bucket) mais n'était joint nulle
+ * part — service-card.tsx et service-detail.tsx lisent tous deux
+ * `service.images`, qui restait donc toujours vide/undefined en pratique.
+ * Aplati ici en un simple `string[]` trié par sort_order, au niveau du
+ * service plutôt que du composant, pour que la forme `Service` reste celle
+ * attendue par l'UI existante.
+ */
+function withFlattenedImages<T extends { service_images?: { url: string; sort_order: number }[] | null }>(
+  row: T
+): Omit<T, "service_images"> & { images: string[] } {
+  const { service_images, ...rest } = row
+  const images = (service_images ?? [])
+    .slice()
+    .sort((a, b) => a.sort_order - b.sort_order)
+    .map((img) => img.url)
+  return { ...rest, images }
+}
+
 class ServicesService {
   async getServices(filters: SearchFilters = {}): Promise<PaginatedResponse<Service>> {
     const page = filters.page ?? 1
@@ -11,7 +33,7 @@ class ServicesService {
 
     let query = supabase
       .from("services")
-      .select("*, provider:provider_profiles(*), category:categories(*)", { count: "exact" })
+      .select(SERVICE_SELECT, { count: "exact" })
       .eq("is_active", true)
 
     if (filters.query) {
@@ -68,7 +90,7 @@ class ServicesService {
     const total = count ?? 0
 
     return {
-      data: (data ?? []) as Service[],
+      data: (data ?? []).map(withFlattenedImages) as unknown as Service[],
       count: total,
       page,
       pageSize,
@@ -79,12 +101,12 @@ class ServicesService {
   async getServiceById(id: string): Promise<Service> {
     const { data, error } = await supabase
       .from("services")
-      .select("*, provider:provider_profiles(*), category:categories(*)")
+      .select(SERVICE_SELECT)
       .eq("id", id)
       .single()
 
     if (error) throw error
-    return data as Service
+    return withFlattenedImages(data) as unknown as Service
   }
 
   async getServicesByCategory(
@@ -105,7 +127,7 @@ class ServicesService {
 
     const { data, error, count } = await supabase
       .from("services")
-      .select("*, provider:provider_profiles(*), category:categories(*)", { count: "exact" })
+      .select(SERVICE_SELECT, { count: "exact" })
       .eq("category_id", category.id)
       .eq("is_active", true)
       .order("created_at", { ascending: false })
@@ -116,7 +138,7 @@ class ServicesService {
     const total = count ?? 0
 
     return {
-      data: (data ?? []) as Service[],
+      data: (data ?? []).map(withFlattenedImages) as unknown as Service[],
       count: total,
       page,
       pageSize,
@@ -127,19 +149,19 @@ class ServicesService {
   async getPopularServices(limit: number = 8): Promise<Service[]> {
     const { data, error } = await supabase
       .from("services")
-      .select("*, provider:provider_profiles(*), category:categories(*)")
+      .select(SERVICE_SELECT)
       .eq("is_active", true)
       .order("total_orders", { ascending: false })
       .limit(limit)
 
     if (error) throw error
-    return (data ?? []) as Service[]
+    return (data ?? []).map(withFlattenedImages) as unknown as Service[]
   }
 
   async searchServices(query: string, location?: string): Promise<Service[]> {
     let dbQuery = supabase
       .from("services")
-      .select("*, provider:provider_profiles(*), category:categories(*)")
+      .select(SERVICE_SELECT)
       .eq("is_active", true)
       .or(`name.ilike.%${query}%,description.ilike.%${query}%`)
       .order("rating", { ascending: false })
@@ -152,7 +174,7 @@ class ServicesService {
     const { data, error } = await dbQuery
 
     if (error) throw error
-    return (data ?? []) as Service[]
+    return (data ?? []).map(withFlattenedImages) as unknown as Service[]
   }
 }
 

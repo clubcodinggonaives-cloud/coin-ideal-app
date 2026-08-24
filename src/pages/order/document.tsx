@@ -10,6 +10,7 @@ import { OrderSummary } from "@/features/document-orders/components/order-summar
 import { OrderStepper } from "@/features/document-orders/components/order-stepper"
 import { useDocumentOrderServices } from "@/features/document-orders/hooks/use-document-services"
 import { useSubmitDocumentOrder } from "@/features/document-orders/hooks/use-submit-document-order"
+import { usePricingConfig } from "@/features/document-orders/hooks/use-pricing-config"
 import { estimateOrderPrice } from "@/features/document-orders/utils/estimate"
 import { INITIAL_ORDER_STATE, type DocumentOrderState } from "@/features/document-orders/types"
 import { ORDER_FILE_MAX_SIZE_MB, ROUTES } from "@/lib/constants"
@@ -31,7 +32,11 @@ function DocumentOrderPage() {
   const services = useMemo(() => servicesData?.data ?? [], [servicesData])
   const selectedService = services.find((s) => s.id === order.serviceId)
 
-  const total = estimateOrderPrice(order, selectedService?.price ?? 0)
+  // Tarifs live (finitions, majoration couleur, frais de livraison) — voir
+  // usePricingConfig(). Cette estimation reste une prévisualisation UX ;
+  // le montant qui compte est celui que create_order() calcule côté serveur.
+  const { data: pricingConfig } = usePricingConfig()
+  const total = estimateOrderPrice(order, selectedService?.price ?? 0, pricingConfig)
 
   const submitOrder = useSubmitDocumentOrder()
 
@@ -65,9 +70,7 @@ function DocumentOrderPage() {
     submitOrder.mutate({
       order,
       service: selectedService,
-      providerId: selectedService.provider_id,
       userId: user.id,
-      total,
     })
   }
 
@@ -83,7 +86,7 @@ function DocumentOrderPage() {
           confirmée, avec le montant définitif.
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Button onClick={() => navigate(ROUTES.DASHBOARD_REQUESTS)}>Suivre ma commande</Button>
+          <Button onClick={() => navigate(ROUTES.DASHBOARD_ORDERS)}>Suivre ma commande</Button>
           <Button variant="outline" onClick={() => navigate(ROUTES.HOME)}>
             Retour à l'accueil
           </Button>
@@ -154,7 +157,12 @@ function DocumentOrderPage() {
                           Le prix est calculé automatiquement selon les tarifs en vigueur.
                         </p>
                         <div className="mt-4">
-                          <PrintOptions order={order} services={services} onChange={patch} />
+                          <PrintOptions
+                            order={order}
+                            services={services}
+                            finishingOptions={pricingConfig?.finishingOptions ?? []}
+                            onChange={patch}
+                          />
                           {fieldErrors.serviceId && (
                             <p className="mt-2 text-sm text-red-500">{fieldErrors.serviceId}</p>
                           )}
@@ -171,6 +179,7 @@ function DocumentOrderPage() {
                         <div className="mt-4">
                           <DeliveryOptions
                             order={order}
+                            deliveryFee={pricingConfig?.flatDeliveryFee ?? 0}
                             onChange={patch}
                             addressError={fieldErrors.deliveryAddress}
                           />
@@ -195,7 +204,7 @@ function DocumentOrderPage() {
                           </Alert>
                         )}
                         <div className="mt-4 lg:hidden">
-                          <OrderSummary order={order} service={selectedService} total={total} />
+                          <OrderSummary order={order} service={selectedService} finishingOptions={pricingConfig?.finishingOptions ?? []} total={total} />
                         </div>
                       </div>
                     )}
@@ -224,7 +233,7 @@ function DocumentOrderPage() {
 
           <div className="hidden lg:block">
             <div className="sticky top-24">
-              <OrderSummary order={order} service={selectedService} total={total} />
+              <OrderSummary order={order} service={selectedService} finishingOptions={pricingConfig?.finishingOptions ?? []} total={total} />
               {order.copies > 0 && order.pages > 0 && (
                 <p className="mt-3 text-center text-xs text-gray-400">
                   Estimation en temps réel : {formatCurrency(total)}

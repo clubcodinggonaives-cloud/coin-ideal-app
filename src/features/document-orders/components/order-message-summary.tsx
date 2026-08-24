@@ -3,7 +3,7 @@ import { FileText, ExternalLink, Loader2 } from "lucide-react"
 import { uploadsService } from "@/services/uploads.service"
 import { PAYMENT_METHODS } from "@/lib/constants"
 import { formatCurrency } from "@/utils/format"
-import { FINISHING_OPTIONS } from "@/features/document-orders/types"
+import { FALLBACK_FINISHING_OPTIONS } from "@/features/document-orders/types"
 import type { DocumentOrderMessagePayload } from "@/features/document-orders/utils/parse-order-message"
 
 interface OrderMessageSummaryProps {
@@ -22,7 +22,7 @@ function OrderMessageSummary({ payload }: OrderMessageSummaryProps) {
   const [urlError, setUrlError] = useState<string | null>(null)
 
   const finishings = payload.finishingIds
-    .map((id) => FINISHING_OPTIONS.find((f) => f.id === id)?.label)
+    .map((id) => FALLBACK_FINISHING_OPTIONS.find((f) => f.id === id)?.label)
     .filter(Boolean)
   const paymentLabel = PAYMENT_METHODS.find((m) => m.value === payload.paymentMethod)?.label
 

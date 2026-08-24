@@ -1,14 +1,15 @@
 import { Input, Select } from "@/components/ui"
-import { FINISHING_OPTIONS, type DocumentOrderState } from "@/features/document-orders/types"
-import type { Service } from "@/types"
+import type { DocumentOrderState } from "@/features/document-orders/types"
+import type { FinishingOption, Service } from "@/types"
 
 interface PrintOptionsProps {
   order: DocumentOrderState
   services: Service[]
+  finishingOptions: Pick<FinishingOption, "id" | "label" | "cost">[]
   onChange: (patch: Partial<DocumentOrderState>) => void
 }
 
-function PrintOptions({ order, services, onChange }: PrintOptionsProps) {
+function PrintOptions({ order, services, finishingOptions, onChange }: PrintOptionsProps) {
   const serviceOptions = services.map((s) => ({
     value: s.id,
     label: `${s.name} — ${s.price} HTG${s.price_unit ? ` / ${s.price_unit}` : ""}`,
@@ -113,7 +114,7 @@ function PrintOptions({ order, services, onChange }: PrintOptionsProps) {
       <div>
         <span className="mb-1.5 block text-sm font-medium text-gray-700">Finitions (optionnel)</span>
         <div className="space-y-2">
-          {FINISHING_OPTIONS.map((option) => (
+          {finishingOptions.map((option) => (
             <label
               key={option.id}
               className="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-2.5 text-sm hover:bg-gray-50"

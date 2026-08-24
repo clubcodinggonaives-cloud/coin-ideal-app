@@ -1,14 +1,17 @@
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Mail, Lock, Eye, EyeOff } from "lucide-react"
 import { Button, Input, Card, CardHeader, CardTitle, CardContent, Alert } from "@/components/ui"
 import { useAuth } from "@/features/auth/hooks/use-auth"
 import { loginSchema, type LoginFormData } from "@/lib/validators"
+import { ROUTES } from "@/lib/constants"
 
 function LoginPage() {
   const { signIn, signInWithGoogle, isLoading: authLoading } = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
@@ -26,6 +29,13 @@ function LoginPage() {
       setError(null)
       setSuccess(null)
       await signIn(data.email, data.password)
+      // BUG FOUND VIA E2E (Phase 4): this component previously never
+      // navigated after a successful signIn — the user stayed stuck on
+      // /auth/login with no feedback and no way forward except manually
+      // typing a URL. `from` supports the redirect-back-after-login pattern
+      // already used elsewhere (e.g. src/pages/order/document.tsx).
+      const from = (location.state as { from?: Location } | null)?.from
+      navigate(from?.pathname ?? ROUTES.DASHBOARD, { replace: true })
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur de connexion. Veuillez réessayer.")
     }

@@ -1,17 +1,20 @@
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Mail, Lock, Eye, EyeOff, User, Phone } from "lucide-react"
 import { Button, Input, Card, CardHeader, CardTitle, CardContent, Alert } from "@/components/ui"
 import { useAuth } from "@/features/auth/hooks/use-auth"
 import { registerSchema, type RegisterFormData } from "@/lib/validators"
+import { ROUTES } from "@/lib/constants"
 
 function RegisterPage() {
   const { signUp, isLoading: authLoading } = useAuth()
+  const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
 
   const {
     register,
@@ -30,12 +33,25 @@ function RegisterPage() {
   const onSubmit = async (data: RegisterFormData) => {
     try {
       setError(null)
-      await signUp(data.email, data.password, {
+      setSuccess(null)
+      // BUG FOUND VIA E2E (Phase 4): same missing-navigation issue as
+      // login.tsx — registration silently left the user on this page.
+      // A real Supabase project may require email confirmation (session is
+      // null in that case) — only navigate straight into the app when
+      // signUp actually produced an active session; otherwise tell the
+      // user to check their inbox instead of bouncing them to a dashboard
+      // they aren't authenticated for yet.
+      const { emailConfirmationRequired } = await signUp(data.email, data.password, {
         firstName: data.firstName,
         lastName: data.lastName,
         phone: data.phone,
         role: data.role,
       })
+      if (emailConfirmationRequired) {
+        setSuccess("Compte créé ! Vérifiez votre boîte mail pour confirmer votre adresse avant de vous connecter.")
+      } else {
+        navigate(ROUTES.DASHBOARD, { replace: true })
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur lors de l'inscription. Veuillez réessayer.")
     }
@@ -57,6 +73,12 @@ function RegisterPage() {
           {error && (
             <Alert variant="error" onClose={() => setError(null)} className="mb-6">
               {error}
+            </Alert>
+          )}
+
+          {success && (
+            <Alert variant="success" onClose={() => setSuccess(null)} className="mb-6">
+              {success}
             </Alert>
           )}
 

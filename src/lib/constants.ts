@@ -49,6 +49,7 @@ export const ROUTES = {
   RESET_PASSWORD: "/auth/reset-password",
 
   DASHBOARD: "/dashboard",
+  DASHBOARD_ORDERS: "/dashboard/orders",
   DASHBOARD_REQUESTS: "/dashboard/requests",
   DASHBOARD_BOOKINGS: "/dashboard/bookings",
   DASHBOARD_FAVORITES: "/dashboard/favorites",
@@ -57,6 +58,7 @@ export const ROUTES = {
   DASHBOARD_SETTINGS: "/dashboard/settings",
 
   PROVIDER_DASHBOARD: "/provider/dashboard",
+  PROVIDER_ORDERS: "/provider/orders",
   PROVIDER_SERVICES: "/provider/services",
   PROVIDER_SERVICE_NEW: "/provider/services/new",
   PROVIDER_SERVICE_EDIT: "/provider/services",
@@ -71,6 +73,8 @@ export const ROUTES = {
   ADMIN_PROVIDERS: "/admin/providers",
   ADMIN_SERVICES: "/admin/services",
   ADMIN_CATEGORIES: "/admin/categories",
+  ADMIN_PRICING: "/admin/pricing",
+  ADMIN_ORDERS: "/admin/orders",
   ADMIN_REQUESTS: "/admin/requests",
   ADMIN_REVIEWS: "/admin/reviews",
   ADMIN_SETTINGS: "/admin/settings",
@@ -86,6 +90,34 @@ export const STORAGE_BUCKETS = {
 /** Formats de fichiers acceptés pour une commande d'impression/copie (cahier des charges §4.2). */
 export const ORDER_FILE_ACCEPT = [".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png"] as const
 export const ORDER_FILE_MAX_SIZE_MB = 20
+
+/**
+ * Vocabulaire de statuts du cahier des charges §5 (orders.status,
+ * supabase/migrations/00028) — distinct du vocabulaire générique
+ * pending/accepted/... de service_requests/bookings (marketplace).
+ */
+export const ORDER_STATUS_LABELS: Record<string, string> = {
+  en_attente: "En attente",
+  confirmee: "Confirmée",
+  en_preparation: "En préparation",
+  prete: "Prête",
+  en_livraison: "En livraison",
+  livree: "Livrée",
+  retiree: "Retirée",
+  annulee: "Annulée",
+}
+
+/** Étapes du parcours pour un retrait au local (cahier des charges §5). */
+export const ORDER_PICKUP_STEPS = ["en_attente", "confirmee", "en_preparation", "prete", "retiree"] as const
+/** Étapes du parcours pour une livraison (cahier des charges §5). */
+export const ORDER_DELIVERY_STEPS = [
+  "en_attente",
+  "confirmee",
+  "en_preparation",
+  "prete",
+  "en_livraison",
+  "livree",
+] as const
 
 export const PAGE_SIZE = 12
 

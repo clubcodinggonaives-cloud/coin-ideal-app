@@ -1,9 +1,12 @@
+import { useState } from "react"
 import { Outlet, Navigate, useLocation } from "react-router-dom"
+import { Menu } from "lucide-react"
 import { Navbar } from "@/components/layout/navbar"
 import { Footer } from "@/components/layout/footer"
 import { DashboardSidebar } from "@/components/layout/sidebar"
 import { useAuth } from "@/features/auth/hooks/use-auth"
 import { Spinner } from "@/components/ui/spinner"
+import { ChatWidget } from "@/features/ai-assistant/components/chat-widget"
 
 function PublicLayout() {
   return (
@@ -13,6 +16,8 @@ function PublicLayout() {
         <Outlet />
       </main>
       <Footer />
+      {/* Cahier des charges §7 : l'assistant IA fait partie du site public. */}
+      <ChatWidget />
     </div>
   )
 }
@@ -20,6 +25,7 @@ function PublicLayout() {
 function DashboardLayout({ variant = "client" }: { variant?: "client" | "provider" | "admin" }) {
   const { isAuthenticated, isLoading, profile } = useAuth()
   const location = useLocation()
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
 
   if (isLoading) {
     return (
@@ -44,8 +50,19 @@ function DashboardLayout({ variant = "client" }: { variant?: "client" | "provide
     <div className="flex min-h-screen flex-col">
       <Navbar />
       <div className="flex flex-1">
-        <DashboardSidebar variant={variant} />
-        <main className="flex-1 overflow-y-auto bg-gray-50 p-6">
+        <DashboardSidebar
+          variant={variant}
+          mobileOpen={mobileSidebarOpen}
+          onMobileClose={() => setMobileSidebarOpen(false)}
+        />
+        <main className="flex-1 overflow-y-auto bg-gray-50 p-4 sm:p-6">
+          <button
+            onClick={() => setMobileSidebarOpen(true)}
+            className="mb-4 flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm lg:hidden"
+          >
+            <Menu className="h-4 w-4" />
+            Menu
+          </button>
           <Outlet />
         </main>
       </div>
