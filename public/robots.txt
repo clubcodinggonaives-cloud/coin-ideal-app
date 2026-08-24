@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://coin-ideal.com/sitemap.xml
+Sitemap: https://coin-ideal-app.vercel.app/sitemap.xml
