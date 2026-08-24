@@ -6,6 +6,7 @@ import { Mail, ArrowLeft } from "lucide-react"
 import { Button, Input, Card, CardHeader, CardTitle, CardContent, Alert } from "@/components/ui"
 import { forgotPasswordSchema, type ForgotPasswordFormData } from "@/lib/validators"
 import { authService } from "@/features/auth/services/auth.service"
+import { ROUTES } from "@/lib/constants"
 
 function ForgotPasswordPage() {
   const [error, setError] = useState<string | null>(null)
@@ -35,7 +36,9 @@ function ForgotPasswordPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mb-4 flex justify-center">
-            <img src="/logo.png" alt="COIN-IDEAL Multi-Service" className="h-14 w-14 object-contain" />
+            <Link to={ROUTES.HOME}>
+              <img src="/logo.png" alt="COIN-IDEAL Multi-Service" className="h-14 w-14 object-contain" />
+            </Link>
           </div>
           <CardTitle className="text-2xl">Mot de passe oublié</CardTitle>
           <p className="mt-2 text-sm text-gray-500">

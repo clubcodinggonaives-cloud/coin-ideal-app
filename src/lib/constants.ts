@@ -17,7 +17,20 @@ export const COMPANY = {
   country: "Haïti",
   email: "contact@coin-ideal.com",
   phone: "", // TODO: numéro de téléphone officiel à renseigner
-  whatsapp: "", // TODO: numéro WhatsApp officiel à renseigner
+  /** Format E.164 sans "+" ni espaces, prêt pour un lien wa.me. */
+  whatsapp: "50941002675",
+} as const
+
+/**
+ * Liens des réseaux sociaux — vides tant que les vraies pages COIN-IDEAL ne
+ * sont pas confirmées (jamais d'URL inventée). Une fois une valeur non vide
+ * renseignée ici, l'icône correspondante devient automatiquement cliquable
+ * (voir Footer) — aucune autre modification de code n'est nécessaire.
+ */
+export const SOCIAL_LINKS = {
+  facebook: "", // TODO: lien de la page Facebook COIN-IDEAL
+  instagram: "", // TODO: lien de la page Instagram COIN-IDEAL
+  tiktok: "", // TODO: lien de la page TikTok COIN-IDEAL
 } as const
 
 export const CURRENCY = "HTG"

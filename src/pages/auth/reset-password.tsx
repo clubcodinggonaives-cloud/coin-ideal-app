@@ -6,6 +6,7 @@ import { Lock, Eye, EyeOff, CheckCircle } from "lucide-react"
 import { Button, Input, Card, CardHeader, CardTitle, CardContent, Alert } from "@/components/ui"
 import { resetPasswordSchema, type ResetPasswordFormData } from "@/lib/validators"
 import { authService } from "@/features/auth/services/auth.service"
+import { ROUTES } from "@/lib/constants"
 
 function ResetPasswordPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -37,7 +38,9 @@ function ResetPasswordPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mb-4 flex justify-center">
-            <img src="/logo.png" alt="COIN-IDEAL Multi-Service" className="h-14 w-14 object-contain" />
+            <Link to={ROUTES.HOME}>
+              <img src="/logo.png" alt="COIN-IDEAL Multi-Service" className="h-14 w-14 object-contain" />
+            </Link>
           </div>
           <CardTitle className="text-2xl">Réinitialiser le mot de passe</CardTitle>
           <p className="mt-2 text-sm text-gray-500">

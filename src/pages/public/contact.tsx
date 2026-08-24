@@ -1,7 +1,8 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Mail, Phone, MapPin, Send, CheckCircle, AlertTriangle } from "lucide-react"
+import { Phone, MapPin, Send, CheckCircle, AlertTriangle } from "lucide-react"
 import { Button, Card, CardContent, Input, Textarea, Alert } from "@/components/ui"
+import { WhatsAppIcon } from "@/components/icons/social-icons"
 import { COMPANY } from "@/lib/constants"
 import { contactSchema, type ContactFormData } from "@/lib/validators"
 import { useSubmitContactMessage } from "@/features/contact/hooks/use-contact"
@@ -46,17 +47,19 @@ function ContactPage() {
       <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="space-y-6">
-            <Card>
-              <CardContent className="flex items-start gap-4 pt-6">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
-                  <Mail className="h-5 w-5" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">Email</h3>
-                  <p className="mt-1 text-sm text-gray-500">{COMPANY.email}</p>
-                </div>
-              </CardContent>
-            </Card>
+            <a href={`https://wa.me/${COMPANY.whatsapp}`} target="_blank" rel="noopener noreferrer" className="block">
+              <Card>
+                <CardContent className="flex items-start gap-4 pt-6">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+                    <WhatsAppIcon className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">WhatsApp</h3>
+                    <p className="mt-1 text-sm text-gray-500">+509 41 00 2675</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </a>
 
             {COMPANY.phone && (
               <Card>

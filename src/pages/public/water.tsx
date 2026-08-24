@@ -1,5 +1,6 @@
-import { Droplets, MapPin, Mail, MessageCircle } from "lucide-react"
+import { Droplets, MapPin } from "lucide-react"
 import { Button, Card, CardContent, Skeleton, EmptyState } from "@/components/ui"
+import { WhatsAppIcon } from "@/components/icons/social-icons"
 import { useServices } from "@/features/services/hooks/use-services"
 import { formatCurrency } from "@/utils/format"
 import { COMPANY } from "@/lib/constants"
@@ -66,17 +67,19 @@ function WaterPage() {
             </p>
           </div>
           <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4">
-            <Mail className="h-5 w-5 shrink-0 text-primary-600" />
-            <a href={`mailto:${COMPANY.email}`} className="text-sm text-gray-700 hover:text-primary-600">
-              {COMPANY.email}
+            <WhatsAppIcon className="h-5 w-5 shrink-0 text-primary-600" />
+            <a href={`https://wa.me/${COMPANY.whatsapp}`} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-700 hover:text-primary-600">
+              +509 41 00 2675
             </a>
           </div>
           <a
-            href={`mailto:${COMPANY.email}?subject=${encodeURIComponent("Demande d'information — Vente d'eau")}`}
+            href={`https://wa.me/${COMPANY.whatsapp}?text=${encodeURIComponent("Bonjou, mwen ta renmen jwenn enfòmasyon sou vant dlo a.")}`}
+            target="_blank"
+            rel="noopener noreferrer"
             className="sm:col-span-1"
           >
             <Button className="w-full">
-              <MessageCircle className="h-4 w-4" />
+              <WhatsAppIcon className="h-4 w-4" />
               Demander des informations
             </Button>
           </a>

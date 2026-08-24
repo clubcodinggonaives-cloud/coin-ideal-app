@@ -1,6 +1,13 @@
 import { Link } from "react-router-dom"
-import { Mail, Phone, MapPin } from "lucide-react"
-import { ROUTES, APP_NAME, COMPANY } from "@/lib/constants"
+import { Phone, MapPin } from "lucide-react"
+import { ROUTES, APP_NAME, COMPANY, SOCIAL_LINKS } from "@/lib/constants"
+import { WhatsAppIcon, FacebookIcon, InstagramIcon, TikTokIcon } from "@/components/icons/social-icons"
+
+const SOCIALS = [
+  { key: "facebook", label: "Facebook", Icon: FacebookIcon },
+  { key: "instagram", label: "Instagram", Icon: InstagramIcon },
+  { key: "tiktok", label: "TikTok", Icon: TikTokIcon },
+] as const
 
 function Footer() {
   const currentYear = new Date().getFullYear()
@@ -48,9 +55,14 @@ function Footer() {
               retirez au local ou faites-vous livrer.
             </p>
             <div className="mt-4 space-y-2">
-              <a href={`mailto:${COMPANY.email}`} className="flex items-center gap-2 text-sm text-gray-500 hover:text-primary-600">
-                <Mail className="h-4 w-4" />
-                {COMPANY.email}
+              <a
+                href={`https://wa.me/${COMPANY.whatsapp}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm text-gray-500 hover:text-primary-600"
+              >
+                <WhatsAppIcon className="h-4 w-4" />
+                WhatsApp : +509 41 00 2675
               </a>
               {COMPANY.phone && (
                 <a href={`tel:${COMPANY.phone}`} className="flex items-center gap-2 text-sm text-gray-500 hover:text-primary-600">
@@ -62,6 +74,33 @@ function Footer() {
                 <MapPin className="h-4 w-4 shrink-0" />
                 {COMPANY.street}, {COMPANY.city}, {COMPANY.country}
               </p>
+            </div>
+
+            <div className="mt-4 flex items-center gap-3">
+              {SOCIALS.map(({ key, label, Icon }) => {
+                const href = SOCIAL_LINKS[key]
+                return href ? (
+                  <a
+                    key={key}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className="text-gray-400 hover:text-primary-600"
+                  >
+                    <Icon className="h-5 w-5" />
+                  </a>
+                ) : (
+                  <span
+                    key={key}
+                    aria-label={`${label} (lien à venir)`}
+                    title={`${label} — lien à venir`}
+                    className="cursor-default text-gray-300"
+                  >
+                    <Icon className="h-5 w-5" />
+                  </span>
+                )
+              })}
             </div>
           </div>
 

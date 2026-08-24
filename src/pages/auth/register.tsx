@@ -62,7 +62,9 @@ function RegisterPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mb-4 flex justify-center">
-            <img src="/logo.png" alt="COIN-IDEAL Multi-Service" className="h-14 w-14 object-contain" />
+            <Link to={ROUTES.HOME}>
+              <img src="/logo.png" alt="COIN-IDEAL Multi-Service" className="h-14 w-14 object-contain" />
+            </Link>
           </div>
           <CardTitle className="text-2xl">Créer un compte</CardTitle>
           <p className="mt-2 text-sm text-gray-500">
