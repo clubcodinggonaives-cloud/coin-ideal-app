@@ -145,9 +145,13 @@ reverted) surfaced Google's actual error text.
 - ~~Tests 1–4 and the live prompt-injection check need a real `GEMINI_API_KEY`~~ —
   **resolved**: real key set by the account owner, model-name bug found and fixed, all
   10 tests now pass live.
-- `ALLOWED_ORIGINS` still points at localhost only — must be updated with the real Vercel
-  domain before that deployment goes live, or the production frontend will be blocked by
-  its own CORS check.
+- ~~`ALLOWED_ORIGINS` still points at localhost only~~ — **resolved**: the real Vercel
+  domain (`https://coin-ideal-app.vercel.app`) reported "assistant indisponible" errors
+  from the actual deployed site — exactly the CORS-block symptom, since the frontend's
+  generic network-error fallback text happens to match the server's real 503 text,
+  making them indistinguishable from the UI alone. Added the Vercel origin to
+  `ALLOWED_ORIGINS`, re-verified with a preflight + POST simulated from that exact
+  origin: both now succeed (`200`, real Gemini reply).
 - No `ai_conversations`/`ai_messages` persistence (unchanged from earlier phases,
   cahier des charges §11 marks this optional — "si l'historique... est activé").
 - Reply quality was checked for correctness/groundedness on 5 representative questions,
@@ -155,10 +159,9 @@ reverted) surfaced Google's actual error text.
 
 ## GO / NO-GO — Gemini Staging Readiness
 
-**GO.** Every scenario in this report — infrastructure (deployment, secrets, CORS, rate
-limiting) and, as of this update, live model behavior (grounded answers, correct refusal
-to invent an unpublished price, correct refusal to hallucinate opening hours, correct
-prompt-injection resistance) — is tested against the real deployed function on the real
-project and passing. The only remaining item (`ALLOWED_ORIGINS` needs the real Vercel
-domain) is a one-line config update at deploy time, not a blocker to staging readiness
-itself.
+**GO — no open items.** Every scenario in this report — infrastructure (deployment,
+secrets, CORS including the real Vercel origin, rate limiting) and live model behavior
+(grounded answers, correct refusal to invent an unpublished price, correct refusal to
+hallucinate opening hours, correct prompt-injection resistance) — is tested against the
+real deployed function, from the real production origin, and passing. The assistant is
+live and usable on `https://coin-ideal-app.vercel.app` today.
