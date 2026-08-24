@@ -1,30 +1,34 @@
-import { useState } from "react"
 import { useForm } from "react-hook-form"
-import { Mail, Phone, MapPin, Send, CheckCircle } from "lucide-react"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Mail, Phone, MapPin, Send, CheckCircle, AlertTriangle } from "lucide-react"
 import { Button, Card, CardContent, Input, Textarea, Alert } from "@/components/ui"
 import { COMPANY } from "@/lib/constants"
-
-interface ContactFormData {
-  name: string
-  email: string
-  subject: string
-  message: string
-}
+import { contactSchema, type ContactFormData } from "@/lib/validators"
+import { useSubmitContactMessage } from "@/features/contact/hooks/use-contact"
 
 function ContactPage() {
-  const [submitted, setSubmitted] = useState(false)
+  const submitMessage = useSubmitContactMessage()
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<ContactFormData>()
+  } = useForm<ContactFormData>({
+    resolver: zodResolver(contactSchema),
+  })
+
+  // isSubmitting (react-hook-form) couvre la validation + l'attente de
+  // submitMessage.mutateAsync ; submitMessage.isPending seul ne couvrirait
+  // pas la phase de validation. Les deux ensemble empêchent un double clic
+  // d'envoyer deux fois pendant que le premier appel est encore en cours.
+  const isBusy = isSubmitting || submitMessage.isPending
 
   const onSubmit = async (data: ContactFormData) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    console.log("Contact form submitted:", data)
-    setSubmitted(true)
+    // Ne JAMAIS afficher "message envoyé" avant que Supabase ne confirme
+    // réellement l'écriture — contrairement à l'ancienne version de cette
+    // page qui affichait toujours un succès après un simple délai simulé.
+    await submitMessage.mutateAsync(data)
     reset()
   }
 
@@ -91,10 +95,18 @@ function ContactPage() {
                   Remplissez le formulaire ci-dessous et nous vous répondrons dans les plus brefs délais.
                 </p>
 
-                {submitted && (
-                  <Alert variant="success" className="mt-4" onClose={() => setSubmitted(false)}>
+                {submitMessage.isSuccess && (
+                  <Alert variant="success" className="mt-4" onClose={() => submitMessage.reset()}>
                     <CheckCircle className="h-4 w-4" />
                     Votre message a été envoyé avec succès. Nous vous répondrons bientôt.
+                  </Alert>
+                )}
+
+                {submitMessage.isError && (
+                  <Alert variant="error" className="mt-4" onClose={() => submitMessage.reset()}>
+                    <AlertTriangle className="h-4 w-4" />
+                    Impossible d&apos;envoyer votre message pour le moment. Veuillez réessayer, ou nous
+                    contacter directement par email.
                   </Alert>
                 )}
 
@@ -104,23 +116,16 @@ function ContactPage() {
                       label="Nom complet"
                       placeholder="Votre nom"
                       error={errors.name?.message}
-                      {...register("name", {
-                        required: "Le nom est requis",
-                        minLength: { value: 2, message: "Le nom doit contenir au moins 2 caracteres" },
-                      })}
+                      disabled={isBusy}
+                      {...register("name")}
                     />
                     <Input
                       label="Adresse email"
                       type="email"
                       placeholder="votre@email.com"
                       error={errors.email?.message}
-                      {...register("email", {
-                        required: "L'email est requis",
-                        pattern: {
-                          value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                          message: "Adresse email invalide",
-                        },
-                      })}
+                      disabled={isBusy}
+                      {...register("email")}
                     />
                   </div>
 
@@ -128,10 +133,8 @@ function ContactPage() {
                     label="Sujet"
                     placeholder="Objet de votre message"
                     error={errors.subject?.message}
-                    {...register("subject", {
-                      required: "Le sujet est requis",
-                      minLength: { value: 3, message: "Le sujet doit contenir au moins 3 caracteres" },
-                    })}
+                    disabled={isBusy}
+                    {...register("subject")}
                   />
 
                   <Textarea
@@ -139,13 +142,11 @@ function ContactPage() {
                     placeholder="Décrivez votre demande en détail..."
                     rows={6}
                     error={errors.message?.message}
-                    {...register("message", {
-                      required: "Le message est requis",
-                      minLength: { value: 10, message: "Le message doit contenir au moins 10 caracteres" },
-                    })}
+                    disabled={isBusy}
+                    {...register("message")}
                   />
 
-                  <Button type="submit" size="lg" isLoading={isSubmitting} className="w-full sm:w-auto">
+                  <Button type="submit" size="lg" isLoading={isBusy} disabled={isBusy} className="w-full sm:w-auto">
                     <Send className="h-4 w-4" />
                     Envoyer le message
                   </Button>

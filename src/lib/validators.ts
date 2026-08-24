@@ -65,6 +65,16 @@ export const messageSchema = z.object({
   content: z.string().min(1, "Le message ne peut pas être vide").max(2000, "Le message ne peut pas dépasser 2000 caractères"),
 })
 
+// Phase 5B: .trim() runs before .min()/.max() in zod's pipeline, so a
+// whitespace-only submission ("          ") correctly fails min() on the
+// trimmed (empty) value instead of passing on raw character count.
+export const contactSchema = z.object({
+  name: z.string().trim().min(2, "Le nom doit contenir au moins 2 caractères").max(100, "Le nom ne peut pas dépasser 100 caractères"),
+  email: z.string().trim().toLowerCase().email("Adresse email invalide").max(255, "Adresse email trop longue"),
+  subject: z.string().trim().min(3, "Le sujet doit contenir au moins 3 caractères").max(200, "Le sujet ne peut pas dépasser 200 caractères"),
+  message: z.string().trim().min(10, "Le message doit contenir au moins 10 caractères").max(2000, "Le message ne peut pas dépasser 2000 caractères"),
+})
+
 export const categorySchema = z.object({
   name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
   description: z.string().optional(),
@@ -82,3 +92,4 @@ export type ReviewFormData = z.infer<typeof reviewSchema>
 export type ServiceRequestFormData = z.infer<typeof serviceRequestSchema>
 export type MessageFormData = z.infer<typeof messageSchema>
 export type CategoryFormData = z.infer<typeof categorySchema>
+export type ContactFormData = z.infer<typeof contactSchema>

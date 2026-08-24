@@ -72,6 +72,7 @@ const AdminServices = lazy(() => import("@/pages/admin/services"))
 const AdminCategories = lazy(() => import("@/pages/admin/categories"))
 const AdminPricing = lazy(() => import("@/pages/admin/pricing"))
 const AdminOrders = lazy(() => import("@/pages/admin/orders"))
+const AdminMessages = lazy(() => import("@/pages/admin/messages"))
 const AdminRequests = lazy(() => import("@/pages/admin/requests"))
 const AdminReviews = lazy(() => import("@/pages/admin/reviews"))
 const AdminSettings = lazy(() => import("@/pages/admin/settings"))
@@ -148,6 +149,7 @@ export const router = createBrowserRouter([
       { path: "categories", element: <SuspenseWrapper><AdminCategories /></SuspenseWrapper> },
       { path: "pricing", element: <SuspenseWrapper><AdminPricing /></SuspenseWrapper> },
       { path: "orders", element: <SuspenseWrapper><AdminOrders /></SuspenseWrapper> },
+      { path: "messages", element: <SuspenseWrapper><AdminMessages /></SuspenseWrapper> },
       { path: "requests", element: <SuspenseWrapper><AdminRequests /></SuspenseWrapper> },
       { path: "reviews", element: <SuspenseWrapper><AdminReviews /></SuspenseWrapper> },
       { path: "settings", element: <SuspenseWrapper><AdminSettings /></SuspenseWrapper> },

@@ -350,6 +350,21 @@ export interface CreateOrderItemInput {
   file_name?: string | null
 }
 
+// =============================================================================
+// Contact form (supabase/migrations/00034)
+// =============================================================================
+export type ContactMessageStatus = "new" | "read" | "archived"
+
+export interface ContactMessage {
+  id: string
+  name: string
+  email: string
+  subject: string
+  message: string
+  status: ContactMessageStatus
+  created_at: string
+}
+
 export interface PaginatedResponse<T> {
   data: T[]
   count: number

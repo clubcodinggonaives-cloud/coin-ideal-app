@@ -20,6 +20,7 @@ import {
   Package,
   Tag,
   X,
+  Mail,
 } from "lucide-react"
 import { Avatar } from "@/components/ui/avatar"
 import { useAuth } from "@/features/auth/hooks/use-auth"
@@ -63,6 +64,7 @@ const adminLinks: SidebarLink[] = [
   { label: "Catégories", href: ROUTES.ADMIN_CATEGORIES, icon: <FolderOpen className="h-5 w-5" /> },
   { label: "Tarifs", href: ROUTES.ADMIN_PRICING, icon: <Tag className="h-5 w-5" /> },
   { label: "Commandes", href: ROUTES.ADMIN_ORDERS, icon: <Package className="h-5 w-5" /> },
+  { label: "Messages", href: ROUTES.ADMIN_MESSAGES, icon: <Mail className="h-5 w-5" /> },
   { label: "Demandes", href: ROUTES.ADMIN_REQUESTS, icon: <ClipboardList className="h-5 w-5" /> },
   { label: "Avis", href: ROUTES.ADMIN_REVIEWS, icon: <Star className="h-5 w-5" /> },
   { label: "Paramètres", href: ROUTES.ADMIN_SETTINGS, icon: <Shield className="h-5 w-5" /> },

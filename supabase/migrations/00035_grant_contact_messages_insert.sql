@@ -1,0 +1,15 @@
+-- Bug found via live testing immediately after 00034 shipped: anonymous
+-- INSERT into contact_messages failed with "new row violates row-level
+-- security policy" even though the RLS WITH CHECK (status = 'new') should
+-- have passed.
+--
+-- Root cause: 00026_grant_api_roles.sql deliberately grants `anon` only
+-- SELECT on every table (by design — every other public-writable table in
+-- this schema requires real authentication to write, e.g.
+-- service_requests_insert_client checks auth.uid() = client_id). Nothing
+-- ever needed anon to have INSERT before. contact_messages is the first
+-- table meant for a genuinely anonymous write (cahier des charges §7: the
+-- contact form is on the public site, no login required) — 00034 added the
+-- RLS policy but never granted the underlying table privilege, so Postgres
+-- never got far enough to evaluate the policy meaningfully as an insert.
+GRANT INSERT ON public.contact_messages TO anon;
