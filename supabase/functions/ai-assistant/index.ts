@@ -242,7 +242,7 @@ Deno.serve(async (req) => {
 
   try {
     const geminiResponse = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent",
       {
         method: "POST",
         headers: {
@@ -263,7 +263,7 @@ Deno.serve(async (req) => {
     )
 
     if (!geminiResponse.ok) {
-      console.error("ai-assistant: Gemini API error", geminiResponse.status)
+      console.error("ai-assistant: Gemini API error", geminiResponse.status, await geminiResponse.text())
       return jsonResponse(
         { error: "L'assistant est momentanément indisponible. Réessayez dans un instant." },
         502,
