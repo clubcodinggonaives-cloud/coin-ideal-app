@@ -1,5 +1,5 @@
 CREATE TABLE public.reports (
-  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id          UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
   reporter_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   target_type TEXT NOT NULL CHECK (target_type IN ('service', 'review', 'provider', 'user')),
   target_id   UUID NOT NULL,

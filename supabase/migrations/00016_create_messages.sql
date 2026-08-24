@@ -1,5 +1,5 @@
 CREATE TABLE public.messages (
-  id         UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id         UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
   thread_id  UUID NOT NULL REFERENCES public.message_threads(id) ON DELETE CASCADE,
   sender_id  UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   content    TEXT NOT NULL,

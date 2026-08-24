@@ -1,5 +1,5 @@
 CREATE TABLE public.provider_profiles (
-  id               UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id               UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
   user_id          UUID NOT NULL UNIQUE REFERENCES public.profiles(id) ON DELETE CASCADE,
   business_name    TEXT NOT NULL,
   description      TEXT,

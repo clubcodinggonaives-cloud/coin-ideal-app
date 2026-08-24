@@ -1,0 +1,21 @@
+-- Portability fix found the hard way: `supabase db push` against the real
+-- Supabase Cloud project failed at 00005_create_categories.sql with
+-- "function uuid_generate_v4() does not exist" — every migration from
+-- 00005 onward called it unqualified, which only resolved locally because
+-- this repo's supabase/config.toml sets `extra_search_path = ["public",
+-- "extensions"]` at the PostgREST/API layer. That setting has no effect on
+-- the plain database connection `db push` uses to run migrations, and nothing
+-- in this project had ever set the database-level search_path to include
+-- `extensions` (where `uuid-ossp` installs `uuid_generate_v4()` — see
+-- 00001_create_extensions.sql's `WITH SCHEMA extensions`).
+--
+-- Fixed at the source: every affected migration (00005-00019, 00028) now
+-- calls `extensions.uuid_generate_v4()` explicitly, so this bug cannot
+-- recur for any migration already in this repo. This migration is the
+-- belt-and-suspenders half of the fix — a database-level default so a
+-- *future* migration that writes `uuid_generate_v4()` unqualified (easy
+-- mistake to repeat) keeps working instead of reintroducing the same
+-- failure on the next `db push`. `ALTER DATABASE ... SET` persists across
+-- all future sessions/connections, unlike a plain `SET search_path` which
+-- only affects the current one.
+ALTER DATABASE postgres SET search_path TO public, extensions, pg_catalog;

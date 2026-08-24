@@ -1,5 +1,5 @@
 CREATE TABLE public.service_requests (
-  id               UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id               UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
   client_id        UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   service_id       UUID NOT NULL REFERENCES public.services(id) ON DELETE CASCADE,
   provider_id      UUID NOT NULL REFERENCES public.provider_profiles(id) ON DELETE CASCADE,

@@ -1,5 +1,5 @@
 CREATE TABLE public.service_images (
-  id         UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id         UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
   service_id UUID NOT NULL REFERENCES public.services(id) ON DELETE CASCADE,
   url        TEXT NOT NULL,
   alt        TEXT,

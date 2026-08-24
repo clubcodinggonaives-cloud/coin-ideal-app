@@ -1,5 +1,5 @@
 CREATE TABLE public.services (
-  id                UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id                UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
   provider_id       UUID NOT NULL REFERENCES public.provider_profiles(id) ON DELETE CASCADE,
   category_id       UUID NOT NULL REFERENCES public.categories(id) ON DELETE RESTRICT,
   name              TEXT NOT NULL,
