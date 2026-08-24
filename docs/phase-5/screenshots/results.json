@@ -1,0 +1,39 @@
+[
+  {
+    "name": "anonymous visitor blocked from /dashboard/orders",
+    "pass": true,
+    "detail": "https://coin-ideal-app.vercel.app/auth/login"
+  },
+  {
+    "name": "anonymous visitor blocked from /provider/orders",
+    "pass": true,
+    "detail": "https://coin-ideal-app.vercel.app/auth/login"
+  },
+  {
+    "name": "anonymous visitor blocked from /admin/orders",
+    "pass": true,
+    "detail": "https://coin-ideal-app.vercel.app/auth/login"
+  },
+  {
+    "name": "anonymous visitor blocked from /admin/pricing",
+    "pass": true,
+    "detail": "https://coin-ideal-app.vercel.app/auth/login"
+  },
+  {
+    "name": "registration against live site",
+    "pass": false,
+    "detail": "https://coin-ideal-app.vercel.app/auth/register"
+  },
+  {
+    "name": "contact form submission on live site",
+    "pass": true
+  },
+  {
+    "name": "chat widget opens on live site",
+    "pass": true
+  },
+  {
+    "name": "chat widget gets a real Gemini reply on live site",
+    "pass": true
+  }
+]
