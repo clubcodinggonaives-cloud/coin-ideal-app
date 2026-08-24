@@ -2,6 +2,18 @@ import { supabase } from "@/services/supabase/client"
 import type { Profile, ProviderProfile, Service, ServiceRequest, PaginatedResponse } from "@/types"
 import { PAGE_SIZE } from "@/lib/constants"
 
+/**
+ * Même bug/correction que src/services/bookings.service.ts : provider_id
+ * référence provider_profiles(id), pas profiles(id), donc PostgREST ne peut
+ * pas intégrer `profiles` via un hint de FK direct côté provider.
+ */
+function flattenProvider<T extends { provider_profile?: { profiles: Profile } | null }>(
+  row: T
+): Omit<T, "provider_profile"> & { provider: Profile | null } {
+  const { provider_profile, ...rest } = row
+  return { ...rest, provider: provider_profile?.profiles ?? null }
+}
+
 class AdminService {
   async getStats(): Promise<{
     totalUsers: number
@@ -108,7 +120,7 @@ class AdminService {
 
     const { data, error, count } = await supabase
       .from("service_requests")
-      .select("*, service:services(*), client:profiles!service_requests_client_id_fkey(*), provider:profiles!service_requests_provider_id_fkey(*)", { count: "exact" })
+      .select("*, service:services(*), client:profiles!service_requests_client_id_fkey(*), provider_profile:provider_profiles!service_requests_provider_id_fkey(profiles:profiles(*))", { count: "exact" })
       .order("created_at", { ascending: false })
       .range(from, to)
 
@@ -117,7 +129,7 @@ class AdminService {
     const total = count ?? 0
 
     return {
-      data: (data ?? []) as ServiceRequest[],
+      data: (data ?? []).map((row) => flattenProvider(row)) as unknown as ServiceRequest[],
       count: total,
       page,
       pageSize,
