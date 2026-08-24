@@ -63,7 +63,7 @@ function OrderMessageSummary({ payload }: OrderMessageSummaryProps) {
             <ExternalLink className="h-3 w-3" />
           </button>
         )}
-        {paymentLabel && <span className="text-gray-400">Paiement : {paymentLabel}</span>}
+        {paymentLabel && <span className="text-gray-500">Paiement : {paymentLabel}</span>}
         <span className="font-medium text-gray-900">{formatCurrency(payload.estimatedTotal)} (estimation)</span>
       </div>
       {urlError && <p className="text-xs text-red-500">{urlError}</p>}

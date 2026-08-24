@@ -44,7 +44,7 @@ function WaterPage() {
                   <p className="mt-3 text-lg font-bold text-primary-700">
                     {formatCurrency(product.price)}
                     {product.price_unit && (
-                      <span className="text-sm font-normal text-gray-400"> / {product.price_unit}</span>
+                      <span className="text-sm font-normal text-gray-500"> / {product.price_unit}</span>
                     )}
                   </p>
                 </CardContent>

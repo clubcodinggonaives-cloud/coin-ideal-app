@@ -85,7 +85,7 @@ function ProviderReviewsPage() {
                       style={{ width: `${(count / total) * 100}%` }}
                     />
                   </div>
-                  <span className="w-8 text-right text-gray-400">{count}</span>
+                  <span className="w-8 text-right text-gray-500">{count}</span>
                 </div>
               )
             })}

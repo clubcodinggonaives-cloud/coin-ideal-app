@@ -98,7 +98,7 @@ function AdminProvidersPage() {
                         <span className="flex items-center gap-1 text-gray-600">
                           <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
                           {provider.rating?.toFixed(1) || "0.0"}
-                          <span className="text-xs text-gray-400">
+                          <span className="text-xs text-gray-500">
                             ({provider.total_reviews})
                           </span>
                         </span>

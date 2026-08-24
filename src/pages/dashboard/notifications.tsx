@@ -137,7 +137,7 @@ function DashboardNotificationsPage() {
                         {!notification.is_read && (
                           <span className="h-2 w-2 shrink-0 rounded-full bg-primary-500" />
                         )}
-                        <span className="shrink-0 text-xs text-gray-400">
+                        <span className="shrink-0 text-xs text-gray-500">
                           {formatRelativeTime(notification.created_at)}
                         </span>
                       </div>

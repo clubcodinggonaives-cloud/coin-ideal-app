@@ -143,7 +143,7 @@ function ProviderRequestsPage() {
                         ) : (
                           request.message && <p className="mt-1 text-sm text-gray-600">{request.message}</p>
                         )}
-                        <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-gray-400">
+                        <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-gray-500">
                           <span className="flex items-center gap-1">
                             <Clock className="h-3 w-3" />
                             {formatRelativeTime(request.created_at)}

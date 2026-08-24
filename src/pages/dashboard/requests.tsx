@@ -115,7 +115,7 @@ function DashboardRequestsPage() {
                         <OrderMessageSummary payload={orderPayload} />
                       ) : (
                         request.provider && (
-                          <p className="text-xs text-gray-400">
+                          <p className="text-xs text-gray-500">
                             Prestataire : {request.provider.first_name} {request.provider.last_name}
                           </p>
                         )

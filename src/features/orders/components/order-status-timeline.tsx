@@ -44,7 +44,7 @@ function OrderStatusTimeline({ order }: OrderStatusTimelineProps) {
                   "flex h-6 w-6 items-center justify-center rounded-full border text-xs font-medium",
                   isDone && "border-primary-600 bg-primary-600 text-white",
                   isCurrent && "border-primary-600 bg-primary-50 text-primary-700",
-                  !isDone && !isCurrent && "border-gray-300 bg-white text-gray-400"
+                  !isDone && !isCurrent && "border-gray-300 bg-white text-gray-500"
                 )}
               >
                 {isDone ? <Check className="h-3.5 w-3.5" /> : index + 1}

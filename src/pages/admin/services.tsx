@@ -83,7 +83,7 @@ function AdminServicesPage() {
                     <tr key={service.id} className="hover:bg-gray-50">
                       <td className="px-4 py-3">
                         <p className="font-medium text-gray-900">{service.name}</p>
-                        <p className="text-xs text-gray-400">{service.location}</p>
+                        <p className="text-xs text-gray-500">{service.location}</p>
                       </td>
                       <td className="px-4 py-3 text-gray-600">
                         {service.provider?.business_name || "—"}

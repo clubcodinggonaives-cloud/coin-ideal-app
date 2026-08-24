@@ -134,7 +134,7 @@ function ProviderBookingsPage() {
                         <p className="text-sm text-gray-500">
                           {booking.service?.name || "Service"}
                         </p>
-                        <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-gray-400">
+                        <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-gray-500">
                           <span className="flex items-center gap-1">
                             <Calendar className="h-3 w-3" />
                             {formatDate(booking.scheduled_date)}

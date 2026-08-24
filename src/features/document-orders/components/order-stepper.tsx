@@ -23,7 +23,7 @@ function OrderStepper({ steps, current }: OrderStepperProps) {
                   "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors",
                   state === "done" && "bg-primary-600 text-white",
                   state === "current" && "border-2 border-primary-600 text-primary-700",
-                  state === "upcoming" && "border-2 border-gray-200 text-gray-400"
+                  state === "upcoming" && "border-2 border-gray-200 text-gray-500"
                 )}
                 aria-current={state === "current" ? "step" : undefined}
               >

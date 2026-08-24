@@ -127,7 +127,7 @@ function ServiceDetailPage() {
               </div>
             ) : (
               <div className="flex aspect-video items-center justify-center rounded-xl bg-gray-100">
-                <div className="text-center text-gray-400">
+                <div className="text-center text-gray-500">
                   <ImageOff className="mx-auto h-12 w-12" />
                   <p className="mt-2 text-sm">Aucune image</p>
                 </div>

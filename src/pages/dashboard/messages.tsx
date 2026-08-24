@@ -166,7 +166,7 @@ function DashboardMessagesPage() {
                           <p className="text-sm">{msg.content}</p>
                           <p
                             className={`mt-1 text-xs ${
-                              isOwn ? "text-primary-200" : "text-gray-400"
+                              isOwn ? "text-primary-200" : "text-gray-500"
                             }`}
                           >
                             {formatRelativeTime(msg.created_at)}

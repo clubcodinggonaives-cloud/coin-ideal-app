@@ -77,7 +77,7 @@ function CategoryPage() {
             <p className="mt-2 max-w-2xl text-gray-500">{category.description}</p>
           )}
           {data && (
-            <p className="mt-1 text-sm text-gray-400">
+            <p className="mt-1 text-sm text-gray-500">
               {data.count} service{data.count > 1 ? "s" : ""} disponible{data.count > 1 ? "s" : ""}
             </p>
           )}

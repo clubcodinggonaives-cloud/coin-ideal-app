@@ -216,7 +216,7 @@ function ServiceNewPage() {
                 <p className="text-sm text-gray-500">
                   Glissez vos photos ici ou cliquez pour parcourir
                 </p>
-                <p className="mt-1 text-xs text-gray-400">PNG, JPG, WEBP jusqu'à 5 Mo — max 5 photos</p>
+                <p className="mt-1 text-xs text-gray-500">PNG, JPG, WEBP jusqu'à 5 Mo — max 5 photos</p>
               </label>
               {imagePicker.error && <p className="mt-1.5 text-sm text-red-600">{imagePicker.error}</p>}
             </div>

@@ -235,7 +235,7 @@ function DocumentOrderPage() {
             <div className="sticky top-24">
               <OrderSummary order={order} service={selectedService} finishingOptions={pricingConfig?.finishingOptions ?? []} total={total} />
               {order.copies > 0 && order.pages > 0 && (
-                <p className="mt-3 text-center text-xs text-gray-400">
+                <p className="mt-3 text-center text-xs text-gray-500">
                   Estimation en temps réel : {formatCurrency(total)}
                 </p>
               )}
