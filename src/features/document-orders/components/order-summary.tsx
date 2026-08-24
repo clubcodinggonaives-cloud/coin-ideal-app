@@ -65,7 +65,7 @@ function OrderSummary({ order, service, finishingOptions, total }: OrderSummaryP
         <span className="text-sm font-medium text-gray-500">Total estimé</span>
         <span className="text-xl font-bold text-primary-700">{formatCurrency(total)}</span>
       </div>
-      <p className="text-xs text-gray-400">
+      <p className="text-xs text-gray-500">
         Estimation indicative — le montant définitif est confirmé par COIN-IDEAL avant préparation.
       </p>
     </div>
