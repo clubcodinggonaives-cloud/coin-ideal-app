@@ -1,0 +1,94 @@
+[
+  {
+    "name": "1-4. client browses /services, sees the real test service",
+    "pass": true
+  },
+  {
+    "name": "5. client views /tarifs, sees real pricing",
+    "pass": true
+  },
+  {
+    "name": "2-3. client register/login",
+    "pass": true,
+    "detail": "used pre-provisioned account, real login flow exercised"
+  },
+  {
+    "name": "6-11. upload, options, finishing skip, pickup, confirm order",
+    "pass": true
+  },
+  {
+    "name": "12. order appears in client dashboard",
+    "pass": true
+  },
+  {
+    "name": "13. order amount is correct (4x2x1 HTG = 8 HTG)",
+    "pass": true
+  },
+  {
+    "name": "14. order status is 'En attente'",
+    "pass": true
+  },
+  {
+    "name": "order id + document path retrievable by owner (Client A)",
+    "pass": true,
+    "detail": "{\"id\":\"632d2c4f-15bf-499a-8568-4a4f8a3c0341\",\"total\":8,\"order_items\":[{\"file_path\":\"a0000000-0000-0000-0000-00000000005e/1787598465663-test-doc.pdf\"}]}"
+  },
+  {
+    "name": "SECURITY: Client B cannot see Client A's order",
+    "pass": true
+  },
+  {
+    "name": "SECURITY: Client B cannot read Client A's order via REST",
+    "pass": true,
+    "detail": "[]"
+  },
+  {
+    "name": "SECURITY: Client B cannot modify Client A's order status",
+    "pass": true,
+    "detail": "{\"status\":403,\"body\":\"{\\\"code\\\":\\\"42501\\\",\\\"details\\\":null,\\\"hint\\\":\\\"Grant the required privileges to the current role with: GRANT UPDATE ON public.o"
+  },
+  {
+    "name": "SECURITY: Client B cannot modify Client A's order price",
+    "pass": true,
+    "detail": "{\"status\":403,\"body\":\"{\\\"code\\\":\\\"42501\\\",\\\"details\\\":null,\\\"hint\\\":\\\"Grant the required privileges to the current role with: GRANT UPDATE ON public.o"
+  },
+  {
+    "name": "SECURITY: Client B cannot read Client A's document path",
+    "pass": true,
+    "detail": "[]"
+  },
+  {
+    "name": "SECURITY: Client B cannot insert a payment on Client A's order",
+    "pass": true,
+    "detail": "{\"status\":403,\"body\":\"{\\\"code\\\":\\\"42501\\\",\\\"details\\\":null,\\\"hint\\\":\\\"Grant the required privileges to the current role with: GRANT INSERT ON public.p"
+  },
+  {
+    "name": "SECURITY: Client B cannot change own role",
+    "pass": true,
+    "detail": "{\"status\":403,\"body\":\"{\\\"code\\\":\\\"42501\\\",\\\"details\\\":null,\\\"hint\\\":null,\\\"message\\\":\\\"Only administrators can change a profile role.\\\"}\"}"
+  },
+  {
+    "name": "staff sees Client A's order",
+    "pass": true
+  },
+  {
+    "name": "staff sees the uploaded document link",
+    "pass": true
+  },
+  {
+    "name": "staff updates order status -> Confirmée",
+    "pass": true
+  },
+  {
+    "name": "staff records a payment",
+    "pass": true
+  },
+  {
+    "name": "client A sees status change to Confirmée after refresh",
+    "pass": true
+  },
+  {
+    "name": "client A received order + payment notifications",
+    "pass": true
+  }
+]
