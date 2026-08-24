@@ -1,0 +1,29 @@
+-- Phase 5F.1 — HIGH remediation: PHASE_5F_SECURITY_REPORT.md finding H1.
+--
+-- Root cause (traced, not assumed):
+--   1. 00026_grant_api_roles.sql: `GRANT SELECT ON ALL TABLES IN SCHEMA
+--      public TO anon` — table-level, every column, no restriction.
+--   2. 00020_create_rls_policies.sql: `profiles_select_public ON
+--      public.profiles FOR SELECT USING (true)` — every ROW visible, and
+--      RLS has no concept of column restriction, so it cannot narrow #1 on
+--      its own.
+--   Combined: any unauthenticated request to `/rest/v1/profiles` returns
+--   every column (email, phone, bio, role, ...) for every user. Reproduced
+--   live before this migration was written — see the remediation report.
+--
+-- The row-level policy is deliberately left untouched: `first_name`/
+-- `last_name`/`avatar_url` for EVERY profile (not just providers) are a
+-- real, existing public-facing need — reviews_select_public (00020) lets
+-- anonymous visitors read reviews, and review-card.tsx displays the
+-- reviewer's name/avatar, and a reviewer is typically a client, not a
+-- provider. Narrowing the ROW set to role='provider' would break that
+-- already-working public feature; this fix narrows the COLUMN set
+-- instead, which is what the finding actually requires ("anonymous must
+-- not retrieve email/role", not "anonymous must not see certain rows").
+--
+-- Postgres column-level privileges: a table-level GRANT SELECT (00026)
+-- must be revoked before a column-level GRANT can actually narrow
+-- anything — a column grant is additive on top of existing privileges,
+-- never a downgrade by itself.
+REVOKE SELECT ON public.profiles FROM anon;
+GRANT SELECT (id, first_name, last_name, avatar_url) ON public.profiles TO anon;
