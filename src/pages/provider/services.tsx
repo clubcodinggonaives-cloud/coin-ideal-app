@@ -17,25 +17,34 @@ import {
   ErrorState,
 } from "@/components/ui"
 import { useAuth } from "@/features/auth/hooks/use-auth"
+import { useProvider } from "@/features/providers/hooks/use-providers"
 import { formatCurrency } from "@/utils/format"
 import { ROUTES } from "@/lib/constants"
 import { supabase } from "@/services/supabase/client"
+import { withFlattenedImages } from "@/services/services.service"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import type { Service } from "@/types"
 
-function useProviderServices(userId: string) {
+/**
+ * services.provider_id référence provider_profiles(id), pas profiles(id)
+ * (auth.uid()) — il faut donc résoudre le provider_profiles.id du provider
+ * connecté avant de filtrer, sinon la requête ne retourne jamais rien (les
+ * deux id ne coïncident jamais). Voir aussi service-new.tsx, qui avait le
+ * même bug côté écriture.
+ */
+function useProviderServices(providerProfileId: string) {
   return useQuery({
-    queryKey: ["provider-services", userId],
+    queryKey: ["provider-services", providerProfileId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("services")
-        .select("*, category:categories(*)")
-        .eq("provider_id", userId)
+        .select("*, category:categories(*), service_images(url, sort_order)")
+        .eq("provider_id", providerProfileId)
         .order("created_at", { ascending: false })
       if (error) throw error
-      return (data ?? []) as Service[]
+      return (data ?? []).map(withFlattenedImages) as unknown as Service[]
     },
-    enabled: !!userId,
+    enabled: !!providerProfileId,
   })
 }
 
@@ -67,10 +76,13 @@ function ProviderServicesPage() {
   const { user } = useAuth()
   const userId = user?.id || ""
 
-  const { data: services, isLoading, error, refetch } = useProviderServices(userId)
+  const { data: providerProfile, isLoading: isProviderLoading } = useProvider(userId)
+  const providerProfileId = providerProfile?.id || ""
+
+  const { data: services, isLoading, error, refetch } = useProviderServices(providerProfileId)
   const deleteService = useDeleteService()
 
-  if (isLoading) return <ServicesSkeleton />
+  if (isProviderLoading || isLoading) return <ServicesSkeleton />
   if (error) return <ErrorState onRetry={refetch} />
 
   return (
@@ -143,7 +155,7 @@ function ProviderServicesPage() {
                   <Badge variant={service.is_active ? "success" : "secondary"}>
                     {service.is_active ? "Actif" : "Inactif"}
                   </Badge>
-                  <Link to={`${ROUTES.PROVIDER_SERVICE_EDIT}/${service.id}`}>
+                  <Link to={`${ROUTES.PROVIDER_SERVICE_EDIT}/${service.id}/edit`}>
                     <Button variant="outline" size="sm">
                       <Edit className="mr-1 h-3.5 w-3.5" />
                       Modifier

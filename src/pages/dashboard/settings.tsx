@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Save, Upload } from "lucide-react"
@@ -11,10 +11,12 @@ import {
   Input,
   Textarea,
   Skeleton,
+  Spinner,
   Alert,
 } from "@/components/ui"
 import { useAuth } from "@/features/auth/hooks/use-auth"
 import { authService } from "@/features/auth/services/auth.service"
+import { uploadsService } from "@/services/uploads.service"
 import { profileSchema, type ProfileFormData } from "@/lib/validators"
 
 function SettingsSkeleton() {
@@ -28,6 +30,35 @@ function SettingsSkeleton() {
 
 function DashboardSettingsPage() {
   const { user, profile, refreshProfile } = useAuth()
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
+  const [avatarError, setAvatarError] = useState<string | null>(null)
+  const avatarInputRef = useRef<HTMLInputElement>(null)
+
+  const handleAvatarSelect = async (fileList: FileList | null) => {
+    const file = fileList?.[0]
+    if (!file || !user?.id) return
+
+    setAvatarError(null)
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      setAvatarError("Format non supporté. Utilisez JPG, PNG ou WEBP.")
+      return
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      setAvatarError("L'image dépasse 2 Mo.")
+      return
+    }
+
+    setIsUploadingAvatar(true)
+    try {
+      await uploadsService.uploadAvatar(user.id, file)
+      await refreshProfile()
+    } catch (err) {
+      setAvatarError(err instanceof Error ? err.message : "Erreur lors du téléversement.")
+    } finally {
+      setIsUploadingAvatar(false)
+      if (avatarInputRef.current) avatarInputRef.current.value = ""
+    }
+  }
 
   const {
     register,
@@ -90,13 +121,31 @@ function DashboardSettingsPage() {
               )}
             </div>
             <div>
-              <Button variant="outline" size="sm">
-                <Upload className="mr-2 h-4 w-4" />
-                Changer la photo
+              <input
+                ref={avatarInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={(e) => handleAvatarSelect(e.target.files)}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={isUploadingAvatar}
+                onClick={() => avatarInputRef.current?.click()}
+              >
+                {isUploadingAvatar ? (
+                  <Spinner className="mr-2 h-4 w-4" />
+                ) : (
+                  <Upload className="mr-2 h-4 w-4" />
+                )}
+                {isUploadingAvatar ? "Téléversement..." : "Changer la photo"}
               </Button>
               <p className="mt-1 text-xs text-gray-500">
-                JPG, PNG. Max 2 Mo.
+                JPG, PNG, WEBP. Max 2 Mo.
               </p>
+              {avatarError && <p className="mt-1 text-xs text-red-600">{avatarError}</p>}
             </div>
           </div>
         </CardContent>

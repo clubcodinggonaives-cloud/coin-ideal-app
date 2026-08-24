@@ -13,7 +13,7 @@ const SERVICE_SELECT =
  * service plutôt que du composant, pour que la forme `Service` reste celle
  * attendue par l'UI existante.
  */
-function withFlattenedImages<T extends { service_images?: { url: string; sort_order: number }[] | null }>(
+export function withFlattenedImages<T extends { service_images?: { url: string; sort_order: number }[] | null }>(
   row: T
 ): Omit<T, "service_images"> & { images: string[] } {
   const { service_images, ...rest } = row
