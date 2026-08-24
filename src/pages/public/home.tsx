@@ -90,7 +90,7 @@ function HomePage() {
     <div>
       <section className="relative overflow-hidden bg-primary-800 px-4 py-20 sm:px-6 lg:px-8">
         <img
-          src="/hero.png"
+          src="/hero.webp"
           alt=""
           className="absolute inset-0 h-full w-full object-cover"
         />
