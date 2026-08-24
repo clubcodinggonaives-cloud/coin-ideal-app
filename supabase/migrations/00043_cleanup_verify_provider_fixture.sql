@@ -1,0 +1,13 @@
+-- Removes the temporary fixture from 00041 now that the provider_id /
+-- slug / storage-RLS fixes it was used to verify are confirmed working
+-- against the real Cloud database (service creation, service list,
+-- image upload on create + edit, image delete, avatar upload,
+-- /dashboard/requests + /dashboard/bookings + /provider/requests all
+-- loading without error). Storage objects (service-images, avatar) were
+-- already removed via the Storage API before this migration runs (direct
+-- SQL DELETE on storage.objects is rejected by Supabase itself).
+--
+-- Deleting the single auth.users row cascades through profiles ->
+-- provider_profiles -> services -> service_images (all FK'd
+-- ON DELETE CASCADE per 00006/00007/00008).
+DELETE FROM auth.users WHERE id = 'e0000000-0000-0000-0000-000000000041';
