@@ -1,0 +1,56 @@
+[
+  {
+    "name": "client sees /services catalogue",
+    "pass": true
+  },
+  {
+    "name": "client sees /tarifs with live prices",
+    "pass": true
+  },
+  {
+    "name": "client A login",
+    "pass": true
+  },
+  {
+    "name": "order submitted successfully (create_order RPC)",
+    "pass": true
+  },
+  {
+    "name": "client dashboard shows new order as 'En attente'",
+    "pass": false
+  },
+  {
+    "name": "Client B does NOT see Client A's order",
+    "pass": true
+  },
+  {
+    "name": "client blocked from /admin/orders (route guard)",
+    "pass": true,
+    "detail": "http://localhost:5173/dashboard"
+  },
+  {
+    "name": "provider sees the pending order",
+    "pass": true
+  },
+  {
+    "name": "provider advanced order to 'Confirmée' via update_order_status()",
+    "pass": true
+  },
+  {
+    "name": "provider recorded a payment via record_payment()",
+    "pass": true
+  },
+  {
+    "name": "client A sees status update to 'Confirmée' after refresh",
+    "pass": true
+  },
+  {
+    "name": "client A received order/payment notifications",
+    "pass": true
+  },
+  {
+    "name": "client cannot self-escalate role via REST API",
+    "pass": true,
+    "detail": "{\"status\":403,\"body\":\"{\\\"code\\\":\\\"42501\\\",\\\"details\\\":null,\\\"hint\\\":null,\\\"message\\\":\\\"Only administrators can change a profile role.\\\"}\"}"
+  }
+]

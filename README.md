@@ -88,6 +88,18 @@ Les migrations SQL se trouvent dans `supabase/migrations/`. Pour les appliquer :
 | `notifications` | Notifications |
 | `reports` | Signalements |
 | `admin_logs` | Logs administrateur |
+| `orders` | Commandes impression/copie — statuts cahier des charges §5 (voir `00028`) |
+| `order_items` | Lignes de commande (fichier, pages, copies, couleur, recto/verso) |
+| `order_item_finishings` | Options de finition choisies par ligne de commande |
+| `finishing_options` | Options de finition configurables (reliure, plastification, agrafage) |
+| `order_status_history` | Historique des changements de statut d'une commande |
+| `payments` | Paiements enregistrés par commande (montant, méthode, référence, statut) |
+| `delivery_zones` | Zones de livraison et leurs frais (optionnel — voir `flat_delivery_fee`) |
+| `settings` | Configuration métier (tarifs, multiplicateurs, politique de rétention) |
+
+Voir `docs/database/` pour l'analyse complète (architecture, ERD, plan
+d'implémentation, matrice RLS, storage, mapping frontend) qui a précédé
+l'ajout de ces 8 tables.
 
 ### RLS (Row Level Security)
 
@@ -100,6 +112,16 @@ RLS est activé sur toutes les tables. Les policies garantissent :
 Les GRANTs nécessaires aux rôles API (`anon`, `authenticated`) sont dans
 `00026_grant_api_roles.sql` — sans ce fichier, un projet Supabase récent
 n'expose aucune table par défaut, même avec des policies RLS correctes.
+
+`00027_security_hardening_profile_roles.sql` corrige deux bugs trouvés lors
+de l'analyse `docs/database/` : (1) `profiles_update_own` ne restreignait
+aucune colonne, donc n'importe quel utilisateur connecté pouvait s'attribuer
+`role = 'admin'` lui-même ; (2) à l'inverse, l'admin ne pouvait pas changer
+le rôle d'un *autre* utilisateur (`adminService.suspendUser()` était un
+no-op silencieux, faute de policy). Écriture sur `orders`/`order_items`/
+`payments` (`00028`) : jamais directe — uniquement via les fonctions
+`create_order()`, `update_order_status()`, `record_payment()`, qui
+recalculent le prix et valident les transitions de statut côté serveur.
 
 ### Storage
 
@@ -135,16 +157,25 @@ sur le site public. Avant un vrai lancement :
 
 ### Assistant IA (Gemini)
 
-Le scaffold vit dans `supabase/functions/ai-assistant/` — voir les
-commentaires en tête et en pied de ce fichier pour l'architecture et les
-limites connues. Aucune UI de chat n'est branchée dessus pour l'instant.
+`supabase/functions/ai-assistant/` — voir les commentaires en tête et en
+pied de ce fichier pour l'architecture et les limites connues. Widget de
+chat flottant branché sur le site public (`src/features/ai-assistant/`),
+jamais sur les pages dashboard/provider/admin (cahier des charges §7 :
+l'assistant fait partie du site public).
 
 Déploiement :
 
 ```bash
 supabase functions deploy ai-assistant
 supabase secrets set GEMINI_API_KEY=votre_cle_reelle
+supabase secrets set ALLOWED_ORIGINS=https://votre-domaine-vercel.app,http://localhost:5173
 ```
+
+`ALLOWED_ORIGINS` restreint le CORS de la fonction (Phase 5) — sans le
+domaine de production dans cette liste, le site déployé sera bloqué par sa
+propre fonction. Le rate limiting (10 req/min par utilisateur ou IP) est
+persistant en base (`ai_rate_limits`, `00032`), pas en mémoire — il tient
+face aux redémarrages à froid et aux instances multiples.
 
 La clé Gemini ne doit **jamais** apparaître dans `.env` ni dans une
 variable préfixée `VITE_` — elle resterait alors visible dans le bundle
