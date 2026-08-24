@@ -5,7 +5,7 @@ class ReviewsService {
   async getReviewsByProvider(providerId: string): Promise<Review[]> {
     const { data, error } = await supabase
       .from("reviews")
-      .select("*, reviewer:profiles(*), provider:provider_profiles(*)")
+      .select("*, reviewer:profiles(id, first_name, last_name, avatar_url), provider:provider_profiles(*)")
       .eq("provider_id", providerId)
       .order("created_at", { ascending: false })
 
@@ -16,7 +16,7 @@ class ReviewsService {
   async getReviewsByService(serviceId: string): Promise<Review[]> {
     const { data, error } = await supabase
       .from("reviews")
-      .select("*, reviewer:profiles(*), provider:provider_profiles(*)")
+      .select("*, reviewer:profiles(id, first_name, last_name, avatar_url), provider:provider_profiles(*)")
       .eq("service_id", serviceId)
       .order("created_at", { ascending: false })
 
@@ -47,7 +47,7 @@ class ReviewsService {
         rating: data.rating,
         comment: data.comment,
       })
-      .select("*, reviewer:profiles(*), provider:provider_profiles(*)")
+      .select("*, reviewer:profiles(id, first_name, last_name, avatar_url), provider:provider_profiles(*)")
       .single()
 
     if (error) throw error
@@ -62,7 +62,7 @@ class ReviewsService {
         response_at: new Date().toISOString(),
       })
       .eq("id", reviewId)
-      .select("*, reviewer:profiles(*), provider:provider_profiles(*)")
+      .select("*, reviewer:profiles(id, first_name, last_name, avatar_url), provider:provider_profiles(*)")
       .single()
 
     if (error) throw error
