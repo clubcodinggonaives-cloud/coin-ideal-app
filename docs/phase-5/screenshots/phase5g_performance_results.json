@@ -1,0 +1,159 @@
+[
+  {
+    "path": "/",
+    "wallClockMs": 3850,
+    "ttfbMs": 62,
+    "fcpMs": 2532,
+    "domContentLoadedMs": 2475,
+    "loadEventMs": 2475,
+    "totalRequests": 49,
+    "jsRequestCount": 42,
+    "jsTotalKB": 621,
+    "imgRequestCount": 2,
+    "imgTotalKB": 246,
+    "supabaseCallCount": 1,
+    "supabaseCalls": [
+      {
+        "url": "/rest/v1/categories?select=*%2Cservices%21inner%28id%29&is_active=eq.true",
+        "status": 200
+      }
+    ],
+    "duplicateRequests": []
+  },
+  {
+    "path": "/services",
+    "wallClockMs": 2329,
+    "ttfbMs": 74,
+    "fcpMs": 772,
+    "domContentLoadedMs": 709,
+    "loadEventMs": 709,
+    "totalRequests": 46,
+    "jsRequestCount": 39,
+    "jsTotalKB": 618,
+    "imgRequestCount": 1,
+    "imgTotalKB": 135,
+    "supabaseCallCount": 2,
+    "supabaseCalls": [
+      {
+        "url": "/rest/v1/categories?select=*&is_active=eq.true&order=name.asc",
+        "status": 200
+      },
+      {
+        "url": "/rest/v1/services?select=*%2Cprovider%3Aprovider_profiles%28*%29%2Ccategory%3Acategories%28*%29%2Cservice_images%28url%2Csort_order%29&is_active=eq.true&order=created_at.desc&offset=0&limit=12",
+        "status": 200
+      }
+    ],
+    "duplicateRequests": []
+  },
+  {
+    "path": "/tarifs",
+    "wallClockMs": 1807,
+    "ttfbMs": 63,
+    "fcpMs": 596,
+    "domContentLoadedMs": 533,
+    "loadEventMs": 533,
+    "totalRequests": 47,
+    "jsRequestCount": 39,
+    "jsTotalKB": 615,
+    "imgRequestCount": 1,
+    "imgTotalKB": 135,
+    "supabaseCallCount": 3,
+    "supabaseCalls": [
+      {
+        "url": "/rest/v1/settings?select=key%2Cvalue",
+        "status": 200
+      },
+      {
+        "url": "/rest/v1/finishing_options?select=*&is_active=eq.true&order=label.asc",
+        "status": 200
+      },
+      {
+        "url": "/rest/v1/services?select=*%2Cprovider%3Aprovider_profiles%28*%29%2Ccategory%3Acategories%28*%29%2Cservice_images%28url%2Csort_order%29&is_active=eq.true&order=created_at.desc&offset=0&limit=50",
+        "status": 200
+      }
+    ],
+    "duplicateRequests": []
+  },
+  {
+    "path": "/commander",
+    "wallClockMs": 2070,
+    "ttfbMs": 79,
+    "fcpMs": 596,
+    "domContentLoadedMs": 513,
+    "loadEventMs": 513,
+    "totalRequests": 52,
+    "jsRequestCount": 44,
+    "jsTotalKB": 633,
+    "imgRequestCount": 1,
+    "imgTotalKB": 135,
+    "supabaseCallCount": 3,
+    "supabaseCalls": [
+      {
+        "url": "/rest/v1/finishing_options?select=*&is_active=eq.true&order=label.asc",
+        "status": 200
+      },
+      {
+        "url": "/rest/v1/services?select=*%2Cprovider%3Aprovider_profiles%28*%29%2Ccategory%3Acategories%28*%29%2Cservice_images%28url%2Csort_order%29&is_active=eq.true&order=created_at.desc&offset=0&limit=50",
+        "status": 200
+      },
+      {
+        "url": "/rest/v1/settings?select=key%2Cvalue",
+        "status": 200
+      }
+    ],
+    "duplicateRequests": []
+  },
+  {
+    "path": "/contact",
+    "wallClockMs": 1706,
+    "ttfbMs": 69,
+    "fcpMs": 516,
+    "domContentLoadedMs": 463,
+    "loadEventMs": 463,
+    "totalRequests": 41,
+    "jsRequestCount": 36,
+    "jsTotalKB": 700,
+    "imgRequestCount": 1,
+    "imgTotalKB": 135,
+    "supabaseCallCount": 0,
+    "supabaseCalls": [],
+    "duplicateRequests": []
+  },
+  {
+    "path": "/comment-ca-marche",
+    "wallClockMs": 1809,
+    "ttfbMs": 69,
+    "fcpMs": 604,
+    "domContentLoadedMs": 543,
+    "loadEventMs": 543,
+    "totalRequests": 39,
+    "jsRequestCount": 34,
+    "jsTotalKB": 600,
+    "imgRequestCount": 1,
+    "imgTotalKB": 135,
+    "supabaseCallCount": 0,
+    "supabaseCalls": [],
+    "duplicateRequests": []
+  },
+  {
+    "path": "/vente-eau",
+    "wallClockMs": 1821,
+    "ttfbMs": 75,
+    "fcpMs": 624,
+    "domContentLoadedMs": 562,
+    "loadEventMs": 562,
+    "totalRequests": 41,
+    "jsRequestCount": 35,
+    "jsTotalKB": 610,
+    "imgRequestCount": 1,
+    "imgTotalKB": 135,
+    "supabaseCallCount": 1,
+    "supabaseCalls": [
+      {
+        "url": "/rest/v1/services?select=*%2Cprovider%3Aprovider_profiles%28*%29%2Ccategory%3Acategories%28*%29%2Cservice_images%28url%2Csort_order%29&is_active=eq.true&order=created_at.desc&offset=0&limit=20",
+        "status": 200
+      }
+    ],
+    "duplicateRequests": []
+  }
+]

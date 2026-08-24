@@ -1,0 +1,46 @@
+[
+  {
+    "path": "/",
+    "violationCount": 0,
+    "violations": []
+  },
+  {
+    "path": "/services",
+    "violationCount": 0,
+    "violations": []
+  },
+  {
+    "path": "/tarifs",
+    "violationCount": 0,
+    "violations": []
+  },
+  {
+    "path": "/commander",
+    "violationCount": 1,
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodeCount": 1,
+        "sample": "<p class=\"mt-3 text-center text-xs text-gray-400\">Estimation en temps réel : 0&nbsp;HTG</p>"
+      }
+    ]
+  },
+  {
+    "path": "/contact",
+    "violationCount": 0,
+    "violations": []
+  },
+  {
+    "path": "/auth/login",
+    "violationCount": 0,
+    "violations": []
+  },
+  {
+    "path": "/auth/register",
+    "violationCount": 0,
+    "violations": []
+  }
+]
