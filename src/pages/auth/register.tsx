@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Mail, Lock, Eye, EyeOff, User, Phone } from "lucide-react"
 import { Button, Input, Card, CardHeader, CardTitle, CardContent, Alert } from "@/components/ui"
 import { useAuth } from "@/features/auth/hooks/use-auth"
+import { translateAuthError } from "@/features/auth/utils/translate-auth-error"
 import { registerSchema, type RegisterFormData } from "@/lib/validators"
 import { ROUTES } from "@/lib/constants"
 
@@ -53,7 +54,7 @@ function RegisterPage() {
         navigate(ROUTES.DASHBOARD, { replace: true })
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur lors de l'inscription. Veuillez réessayer.")
+      setError(translateAuthError(err, "Erreur lors de l'inscription. Veuillez réessayer."))
     }
   }
 
@@ -131,6 +132,7 @@ function RegisterPage() {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="text-gray-400 hover:text-gray-600"
+                    aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -152,6 +154,7 @@ function RegisterPage() {
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="text-gray-400 hover:text-gray-600"
+                    aria-label={showConfirmPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
                   >
                     {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -181,7 +184,7 @@ function RegisterPage() {
                   />
                   <div className="text-center">
                     <span className="block text-sm font-medium">Client</span>
-                    <span className="text-xs text-gray-500">Je cherche des services</span>
+                    <span className="text-xs text-gray-600">Je cherche des services</span>
                   </div>
                 </label>
                 <label
@@ -199,7 +202,7 @@ function RegisterPage() {
                   />
                   <div className="text-center">
                     <span className="block text-sm font-medium">Prestataire</span>
-                    <span className="text-xs text-gray-500">Je propose des services</span>
+                    <span className="text-xs text-gray-600">Je propose des services</span>
                   </div>
                 </label>
               </div>

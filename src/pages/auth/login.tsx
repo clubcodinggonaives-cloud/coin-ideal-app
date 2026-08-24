@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Mail, Lock, Eye, EyeOff } from "lucide-react"
 import { Button, Input, Card, CardHeader, CardTitle, CardContent, Alert } from "@/components/ui"
 import { useAuth } from "@/features/auth/hooks/use-auth"
+import { translateAuthError } from "@/features/auth/utils/translate-auth-error"
 import { loginSchema, type LoginFormData } from "@/lib/validators"
 import { ROUTES } from "@/lib/constants"
 
@@ -37,7 +38,7 @@ function LoginPage() {
       const from = (location.state as { from?: Location } | null)?.from
       navigate(from?.pathname ?? ROUTES.DASHBOARD, { replace: true })
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur de connexion. Veuillez réessayer.")
+      setError(translateAuthError(err, "Erreur de connexion. Veuillez réessayer."))
     }
   }
 
@@ -46,7 +47,7 @@ function LoginPage() {
       setError(null)
       await signInWithGoogle()
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur de connexion avec Google.")
+      setError(translateAuthError(err, "Erreur de connexion avec Google."))
     }
   }
 
@@ -98,6 +99,7 @@ function LoginPage() {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="text-gray-400 hover:text-gray-600"
+                    aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>

@@ -6,6 +6,7 @@ import { Lock, Eye, EyeOff, CheckCircle } from "lucide-react"
 import { Button, Input, Card, CardHeader, CardTitle, CardContent, Alert } from "@/components/ui"
 import { resetPasswordSchema, type ResetPasswordFormData } from "@/lib/validators"
 import { authService } from "@/features/auth/services/auth.service"
+import { translateAuthError } from "@/features/auth/utils/translate-auth-error"
 import { ROUTES } from "@/lib/constants"
 
 function ResetPasswordPage() {
@@ -29,7 +30,7 @@ function ResetPasswordPage() {
       await authService.updatePassword(data.password)
       setSuccess(true)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur lors de la mise à jour du mot de passe.")
+      setError(translateAuthError(err, "Erreur lors de la mise à jour du mot de passe."))
     }
   }
 
@@ -76,6 +77,7 @@ function ResetPasswordPage() {
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="text-gray-400 hover:text-gray-600"
+                      aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
@@ -97,6 +99,7 @@ function ResetPasswordPage() {
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       className="text-gray-400 hover:text-gray-600"
+                      aria-label={showConfirmPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
                     >
                       {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>

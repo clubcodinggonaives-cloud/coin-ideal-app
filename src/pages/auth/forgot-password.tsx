@@ -6,6 +6,7 @@ import { Mail, ArrowLeft } from "lucide-react"
 import { Button, Input, Card, CardHeader, CardTitle, CardContent, Alert } from "@/components/ui"
 import { forgotPasswordSchema, type ForgotPasswordFormData } from "@/lib/validators"
 import { authService } from "@/features/auth/services/auth.service"
+import { translateAuthError } from "@/features/auth/utils/translate-auth-error"
 import { ROUTES } from "@/lib/constants"
 
 function ForgotPasswordPage() {
@@ -27,7 +28,7 @@ function ForgotPasswordPage() {
       await authService.resetPassword(data.email)
       setSuccess(true)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur lors de l'envoi. Veuillez réessayer.")
+      setError(translateAuthError(err, "Erreur lors de l'envoi. Veuillez réessayer."))
     }
   }
 
