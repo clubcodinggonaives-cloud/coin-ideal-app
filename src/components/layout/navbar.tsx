@@ -63,6 +63,7 @@ function Navbar() {
               <Link
                 to={ROUTES.DASHBOARD_NOTIFICATIONS}
                 className="relative rounded-lg p-2 text-gray-500 hover:bg-gray-100"
+                aria-label="Notifications"
               >
                 <Bell className="h-5 w-5" />
               </Link>
@@ -167,6 +168,7 @@ function Navbar() {
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 lg:hidden"
+            aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"}
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>

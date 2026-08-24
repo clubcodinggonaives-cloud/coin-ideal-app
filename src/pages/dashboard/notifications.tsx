@@ -149,6 +149,7 @@ function DashboardNotificationsPage() {
                       size="sm"
                       onClick={() => markAsRead.mutate(notification.id)}
                       disabled={markAsRead.isPending}
+                      aria-label="Marquer comme lu"
                     >
                       <CheckCircle className="h-4 w-4" />
                     </Button>

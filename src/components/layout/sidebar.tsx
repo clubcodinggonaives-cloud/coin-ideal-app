@@ -179,6 +179,7 @@ function DashboardSidebar({ variant = "client", mobileOpen = false, onMobileClos
           <button
             onClick={() => setCollapsed(!collapsed)}
             className="flex w-full items-center justify-center rounded-lg p-2 text-gray-400 hover:bg-gray-50 hover:text-gray-600"
+            aria-label={collapsed ? "Développer le menu" : "Réduire le menu"}
           >
             {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
           </button>
