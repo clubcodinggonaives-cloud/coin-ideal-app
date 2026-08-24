@@ -32,7 +32,7 @@ function OrderStepper({ steps, current }: OrderStepperProps) {
               <span
                 className={cn(
                   "hidden text-sm font-medium sm:block",
-                  state === "upcoming" ? "text-gray-400" : "text-gray-900"
+                  state === "upcoming" ? "text-gray-500" : "text-gray-900"
                 )}
               >
                 {step.label}

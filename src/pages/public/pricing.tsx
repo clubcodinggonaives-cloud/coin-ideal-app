@@ -19,7 +19,7 @@ function PricingCard({ service }: { service: Service }) {
         </div>
         <div className="shrink-0 text-right">
           <p className="text-lg font-bold text-primary-700">{formatCurrency(service.price)}</p>
-          {service.price_unit && <p className="text-xs text-gray-400">/ {service.price_unit}</p>}
+          {service.price_unit && <p className="text-xs text-gray-500">/ {service.price_unit}</p>}
         </div>
       </CardContent>
     </Card>

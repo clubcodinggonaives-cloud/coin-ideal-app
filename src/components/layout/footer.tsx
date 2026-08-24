@@ -93,6 +93,7 @@ function Footer() {
                 ) : (
                   <span
                     key={key}
+                    role="img"
                     aria-label={`${label} (lien à venir)`}
                     title={`${label} — lien à venir`}
                     className="cursor-default text-gray-300"
@@ -124,7 +125,7 @@ function Footer() {
           ))}
         </div>
 
-        <div className="mt-10 border-t border-gray-200 pt-6 text-center text-sm text-gray-400">
+        <div className="mt-10 border-t border-gray-200 pt-6 text-center text-sm text-gray-500">
           &copy; {currentYear} {APP_NAME}. Tous droits réservés.
         </div>
       </div>

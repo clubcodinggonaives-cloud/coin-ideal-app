@@ -238,6 +238,7 @@ function ServicesPage() {
                 )}
               </div>
               <Select
+                aria-label="Trier les services"
                 options={sortOptions}
                 value={sortBy}
                 onChange={(e) => updateParams({ sort: e.target.value, page: "1" })}

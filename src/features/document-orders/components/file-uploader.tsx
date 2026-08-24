@@ -1,4 +1,4 @@
-import { useState, useRef, type DragEvent, type KeyboardEvent } from "react"
+import { useState, useRef, type DragEvent } from "react"
 import { FileText, Upload, X } from "lucide-react"
 import { ORDER_FILE_ACCEPT, ORDER_FILE_MAX_SIZE_MB } from "@/lib/constants"
 import { validateOrderFile } from "@/features/document-orders/utils/validate-file"
@@ -40,16 +40,9 @@ function FileUploader({ file, onChange, error }: FileUploaderProps) {
     onChange(selected)
   }
 
-  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+  const handleDrop = (e: DragEvent<HTMLLabelElement>) => {
     e.preventDefault()
     handleFiles(e.dataTransfer.files)
-  }
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault()
-      inputRef.current?.click()
-    }
   }
 
   if (file) {
@@ -80,17 +73,13 @@ function FileUploader({ file, onChange, error }: FileUploaderProps) {
 
   return (
     <div>
-      <div
-        role="button"
-        tabIndex={0}
-        onClick={() => inputRef.current?.click()}
-        onKeyDown={handleKeyDown}
+      <label
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}
         className={cn(
           "flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed px-6 py-10 text-center transition-colors",
           "border-gray-300 hover:border-primary-400 hover:bg-primary-50/40",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2",
+          "has-[:focus-visible]:outline-none has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary-500 has-[:focus-visible]:ring-offset-2",
           displayedError && "border-red-400"
         )}
       >
@@ -113,7 +102,7 @@ function FileUploader({ file, onChange, error }: FileUploaderProps) {
           className="sr-only"
           aria-label="Téléverser votre document"
         />
-      </div>
+      </label>
       {displayedError && <p className="mt-1.5 text-sm text-red-500">{displayedError}</p>}
     </div>
   )
