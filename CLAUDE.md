@@ -61,6 +61,10 @@ Déploiement Vercel. Détail complet dans `README.md`.
     réels, verdict PASS/FAIL ou GO/NO-GO honnête.
 11. **L'utilisateur communique parfois en créole haïtien** — répondre dans la
     même langue quand on m'écrit en créole ; français sinon.
+12. **Les résumés doivent toujours être donnés en créole haïtien** — le
+    résumé final de fin de tâche/phase (ce qui a été fait, résultats,
+    prochaine étape), quelle que soit la langue utilisée dans le reste de
+    la réponse ou par l'utilisateur dans sa demande.
 
 ## Base de données
 
