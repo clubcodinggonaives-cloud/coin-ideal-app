@@ -7,10 +7,14 @@ import {
   Skeleton,
   EmptyState,
   ErrorState,
+  ResponsiveTableScroll,
+  TableScrollHint,
+  STICKY_COL_CLASS,
 } from "@/components/ui"
 import { useAuth } from "@/features/auth/hooks/use-auth"
 import { useBookings } from "@/features/bookings/hooks/use-bookings"
 import { formatCurrency, formatDate } from "@/utils/format"
+import { cn } from "@/utils/cn"
 
 function EarningsSkeleton() {
   return (
@@ -111,11 +115,13 @@ function ProviderEarningsPage() {
               description="Vos revenus apparaîtront ici une fois vos premières prestations terminées."
             />
           ) : (
-            <div className="overflow-x-auto">
+            <>
+              <TableScrollHint />
+              <ResponsiveTableScroll>
               <table className="w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="pb-3 font-medium text-gray-500">Client</th>
+                    <th className={cn("pb-3 font-medium text-gray-500", STICKY_COL_CLASS)}>Client</th>
                     <th className="pb-3 font-medium text-gray-500">Service</th>
                     <th className="pb-3 font-medium text-gray-500">Date</th>
                     <th className="pb-3 text-right font-medium text-gray-500">Montant</th>
@@ -124,7 +130,7 @@ function ProviderEarningsPage() {
                 <tbody className="divide-y divide-gray-100">
                   {completedBookings.map((booking) => (
                     <tr key={booking.id}>
-                      <td className="py-3 text-gray-900">
+                      <td className={cn("py-3 text-gray-900", STICKY_COL_CLASS)}>
                         {booking.client
                           ? `${booking.client.first_name} ${booking.client.last_name}`
                           : "Client"}
@@ -142,7 +148,8 @@ function ProviderEarningsPage() {
                   ))}
                 </tbody>
               </table>
-            </div>
+              </ResponsiveTableScroll>
+            </>
           )}
         </CardContent>
       </Card>

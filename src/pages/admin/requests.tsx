@@ -9,9 +9,13 @@ import {
   EmptyState,
   ErrorState,
   Pagination,
+  ResponsiveTableScroll,
+  TableScrollHint,
+  STICKY_COL_CLASS,
 } from "@/components/ui"
 import { useAdminRequests } from "@/features/admin/hooks/use-admin"
 import { formatDate } from "@/utils/format"
+import { cn } from "@/utils/cn"
 import type { RequestStatus } from "@/types"
 
 const statusConfig: Record<RequestStatus, { variant: "warning" | "info" | "success" | "destructive" | "secondary"; label: string }> = {
@@ -78,11 +82,13 @@ function AdminRequestsPage() {
       ) : (
         <>
           <Card>
-            <CardContent className="overflow-x-auto p-0">
+            <TableScrollHint />
+            <CardContent className="p-0">
+              <ResponsiveTableScroll>
               <table className="w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-gray-200 bg-gray-50">
-                    <th className="px-4 py-3 font-medium text-gray-500">Client</th>
+                    <th className={cn("px-4 py-3 font-medium text-gray-500", STICKY_COL_CLASS)}>Client</th>
                     <th className="px-4 py-3 font-medium text-gray-500">Prestataire</th>
                     <th className="px-4 py-3 font-medium text-gray-500">Service</th>
                     <th className="px-4 py-3 font-medium text-gray-500">Statut</th>
@@ -94,7 +100,7 @@ function AdminRequestsPage() {
                     const config = statusConfig[req.status]
                     return (
                       <tr key={req.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3 text-gray-900">
+                        <td className={cn("px-4 py-3 text-gray-900", STICKY_COL_CLASS)}>
                           {req.client
                             ? `${req.client.first_name} ${req.client.last_name}`
                             : "—"}
@@ -118,6 +124,7 @@ function AdminRequestsPage() {
                   })}
                 </tbody>
               </table>
+              </ResponsiveTableScroll>
             </CardContent>
           </Card>
 

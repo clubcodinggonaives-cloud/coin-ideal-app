@@ -10,9 +10,13 @@ import {
   EmptyState,
   ErrorState,
   Pagination,
+  ResponsiveTableScroll,
+  TableScrollHint,
+  STICKY_COL_CLASS,
 } from "@/components/ui"
 import { useAdminUsers, useSuspendUser } from "@/features/admin/hooks/use-admin"
 import { formatDate } from "@/utils/format"
+import { cn } from "@/utils/cn"
 
 function AdminUsersSkeleton() {
   return (
@@ -69,11 +73,13 @@ function AdminUsersPage() {
       ) : (
         <>
           <Card>
-            <CardContent className="overflow-x-auto p-0">
+            <TableScrollHint />
+            <CardContent className="p-0">
+              <ResponsiveTableScroll>
               <table className="w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-gray-200 bg-gray-50">
-                    <th className="px-4 py-3 font-medium text-gray-500">Nom</th>
+                    <th className={cn("px-4 py-3 font-medium text-gray-500", STICKY_COL_CLASS)}>Nom</th>
                     <th className="px-4 py-3 font-medium text-gray-500">Email</th>
                     <th className="px-4 py-3 font-medium text-gray-500">Rôle</th>
                     <th className="px-4 py-3 font-medium text-gray-500">Inscrit le</th>
@@ -83,7 +89,7 @@ function AdminUsersPage() {
                 <tbody className="divide-y divide-gray-100">
                   {filtered.map((user) => (
                     <tr key={user.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3">
+                      <td className={cn("px-4 py-3", STICKY_COL_CLASS)}>
                         <p className="font-medium text-gray-900">
                           {user.first_name} {user.last_name}
                         </p>
@@ -121,6 +127,7 @@ function AdminUsersPage() {
                   ))}
                 </tbody>
               </table>
+              </ResponsiveTableScroll>
             </CardContent>
           </Card>
 

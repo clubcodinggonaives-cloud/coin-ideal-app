@@ -10,9 +10,13 @@ import {
   EmptyState,
   ErrorState,
   Pagination,
+  ResponsiveTableScroll,
+  TableScrollHint,
+  STICKY_COL_CLASS,
 } from "@/components/ui"
 import { useAdminProviders, useVerifyProvider } from "@/features/admin/hooks/use-admin"
 import { formatDate } from "@/utils/format"
+import { cn } from "@/utils/cn"
 
 function AdminProvidersSkeleton() {
   return (
@@ -69,11 +73,13 @@ function AdminProvidersPage() {
       ) : (
         <>
           <Card>
-            <CardContent className="overflow-x-auto p-0">
+            <TableScrollHint />
+            <CardContent className="p-0">
+              <ResponsiveTableScroll>
               <table className="w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-gray-200 bg-gray-50">
-                    <th className="px-4 py-3 font-medium text-gray-500">Nom</th>
+                    <th className={cn("px-4 py-3 font-medium text-gray-500", STICKY_COL_CLASS)}>Nom</th>
                     <th className="px-4 py-3 font-medium text-gray-500">Business</th>
                     <th className="px-4 py-3 font-medium text-gray-500">Note</th>
                     <th className="px-4 py-3 font-medium text-gray-500">Vérifié</th>
@@ -84,7 +90,7 @@ function AdminProvidersPage() {
                 <tbody className="divide-y divide-gray-100">
                   {filtered.map((provider) => (
                     <tr key={provider.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3">
+                      <td className={cn("px-4 py-3", STICKY_COL_CLASS)}>
                         <p className="font-medium text-gray-900">
                           {provider.profiles
                             ? `${provider.profiles.first_name} ${provider.profiles.last_name}`
@@ -131,6 +137,7 @@ function AdminProvidersPage() {
                   ))}
                 </tbody>
               </table>
+              </ResponsiveTableScroll>
             </CardContent>
           </Card>
 
