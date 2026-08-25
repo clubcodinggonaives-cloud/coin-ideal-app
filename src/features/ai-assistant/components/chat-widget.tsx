@@ -43,7 +43,11 @@ function ChatWidget() {
       {open && (
         <div
           className={cn(
-            "fixed inset-0 z-40 flex flex-col bg-white",
+            // z-[60] : le panneau plein écran mobile doit passer AU-DESSUS du
+            // Navbar public (sticky, z-50) — sinon celui-ci reste visible et
+            // cliquable par-dessus l'en-tête de l'assistant (trouvé lors de
+            // l'audit Playwright Phase 5H, capture home-chat-open_375).
+            "fixed inset-0 z-[60] flex flex-col bg-white",
             "sm:inset-auto sm:bottom-5 sm:right-5 sm:h-[32rem] sm:w-96 sm:rounded-2xl sm:border sm:border-gray-200 sm:shadow-2xl"
           )}
         >

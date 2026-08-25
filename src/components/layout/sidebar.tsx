@@ -26,7 +26,7 @@ import { Avatar } from "@/components/ui/avatar"
 import { useAuth } from "@/features/auth/hooks/use-auth"
 import { ROUTES } from "@/lib/constants"
 import { cn } from "@/utils/cn"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 interface SidebarLink {
   label: string
@@ -93,6 +93,15 @@ function DashboardSidebar({ variant = "client", mobileOpen = false, onMobileClos
   const links = variant === "admin" ? adminLinks : variant === "provider" ? providerLinks : clientLinks
 
   const displayName = profile ? `${profile.first_name} ${profile.last_name}` : "Utilisateur"
+
+  useEffect(() => {
+    if (!mobileOpen) return
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onMobileClose?.()
+    }
+    document.addEventListener("keydown", handleEscape)
+    return () => document.removeEventListener("keydown", handleEscape)
+  }, [mobileOpen, onMobileClose])
 
   return (
     <>

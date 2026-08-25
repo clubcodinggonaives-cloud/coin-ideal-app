@@ -17,20 +17,43 @@ const sizeClasses = {
   lg: "max-w-2xl",
 }
 
+const FOCUSABLE_SELECTOR =
+  'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+
 const Modal = forwardRef<HTMLDivElement, ModalProps>(
   ({ isOpen, onClose, title, children, className, size = "md" }, ref) => {
     const overlayRef = useRef<HTMLDivElement>(null)
+    const contentRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
       if (!isOpen) return
-      const handleEscape = (e: KeyboardEvent) => {
-        if (e.key === "Escape") onClose()
+      const handleKeydown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+          onClose()
+          return
+        }
+        if (e.key !== "Tab" || !contentRef.current) return
+        const focusable = contentRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)
+        if (focusable.length === 0) return
+        const first = focusable[0]
+        const last = focusable[focusable.length - 1]
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault()
+          last.focus()
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault()
+          first.focus()
+        }
       }
-      document.addEventListener("keydown", handleEscape)
+      document.addEventListener("keydown", handleKeydown)
       document.body.style.overflow = "hidden"
+      const previouslyFocused = document.activeElement as HTMLElement | null
+      const firstFocusable = contentRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR)
+      firstFocusable?.focus()
       return () => {
-        document.removeEventListener("keydown", handleEscape)
+        document.removeEventListener("keydown", handleKeydown)
         document.body.style.overflow = ""
+        previouslyFocused?.focus()
       }
     }, [isOpen, onClose])
 
@@ -45,7 +68,14 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
         }}
       >
         <div
-          ref={ref}
+          ref={(node) => {
+            contentRef.current = node
+            if (typeof ref === "function") ref(node)
+            else if (ref) ref.current = node
+          }}
+          role="dialog"
+          aria-modal="true"
+          aria-label={title}
           className={cn(
             "relative w-full rounded-xl bg-white p-6 shadow-xl",
             sizeClasses[size],

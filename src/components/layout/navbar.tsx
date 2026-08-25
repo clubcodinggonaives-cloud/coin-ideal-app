@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Menu, X, Bell, LogOut, Settings, LayoutDashboard, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -18,6 +18,17 @@ function Navbar() {
     navigate(ROUTES.HOME)
     setUserMenuOpen(false)
   }
+
+  useEffect(() => {
+    if (!mobileOpen && !userMenuOpen) return
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return
+      setMobileOpen(false)
+      setUserMenuOpen(false)
+    }
+    document.addEventListener("keydown", handleEscape)
+    return () => document.removeEventListener("keydown", handleEscape)
+  }, [mobileOpen, userMenuOpen])
 
   const navLinks = [
     { label: "Services", href: ROUTES.SERVICES },
