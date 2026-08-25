@@ -1,12 +1,15 @@
 import { RouterProvider } from "react-router-dom"
 import { Providers } from "@/app/providers"
 import { router } from "@/app/router"
+import { AppErrorBoundary } from "@/components/error-boundary"
 
 function App() {
   return (
-    <Providers>
-      <RouterProvider router={router} />
-    </Providers>
+    <AppErrorBoundary>
+      <Providers>
+        <RouterProvider router={router} />
+      </Providers>
+    </AppErrorBoundary>
   )
 }
 

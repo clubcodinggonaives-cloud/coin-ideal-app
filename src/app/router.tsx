@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react"
 import { createBrowserRouter } from "react-router-dom"
 import { Spinner } from "@/components/ui/spinner"
+import { RouteErrorBoundary } from "@/components/error-boundary"
 
 const PublicLayout = lazy(() =>
   import("@/components/layout/dashboard-layout").then((m) => ({ default: m.PublicLayout }))
@@ -81,6 +82,7 @@ export const router = createBrowserRouter([
   // Public routes
   {
     element: <SuspenseWrapper><PublicLayout /></SuspenseWrapper>,
+    errorElement: <RouteErrorBoundary />,
     children: [
       { path: "/", element: <SuspenseWrapper><Home /></SuspenseWrapper> },
       { path: "/services", element: <SuspenseWrapper><Services /></SuspenseWrapper> },
@@ -98,15 +100,16 @@ export const router = createBrowserRouter([
   },
 
   // Auth routes (no layout)
-  { path: "/auth/login", element: <SuspenseWrapper><Login /></SuspenseWrapper> },
-  { path: "/auth/register", element: <SuspenseWrapper><Register /></SuspenseWrapper> },
-  { path: "/auth/forgot-password", element: <SuspenseWrapper><ForgotPassword /></SuspenseWrapper> },
-  { path: "/auth/reset-password", element: <SuspenseWrapper><ResetPassword /></SuspenseWrapper> },
+  { path: "/auth/login", element: <SuspenseWrapper><Login /></SuspenseWrapper>, errorElement: <RouteErrorBoundary /> },
+  { path: "/auth/register", element: <SuspenseWrapper><Register /></SuspenseWrapper>, errorElement: <RouteErrorBoundary /> },
+  { path: "/auth/forgot-password", element: <SuspenseWrapper><ForgotPassword /></SuspenseWrapper>, errorElement: <RouteErrorBoundary /> },
+  { path: "/auth/reset-password", element: <SuspenseWrapper><ResetPassword /></SuspenseWrapper>, errorElement: <RouteErrorBoundary /> },
 
   // Client dashboard
   {
     path: "/dashboard",
     element: <SuspenseWrapper><DashboardLayout variant="client" /></SuspenseWrapper>,
+    errorElement: <RouteErrorBoundary />,
     children: [
       { index: true, element: <SuspenseWrapper><DashboardOverview /></SuspenseWrapper> },
       { path: "orders", element: <SuspenseWrapper><DashboardOrders /></SuspenseWrapper> },
@@ -123,6 +126,7 @@ export const router = createBrowserRouter([
   {
     path: "/provider",
     element: <SuspenseWrapper><DashboardLayout variant="provider" /></SuspenseWrapper>,
+    errorElement: <RouteErrorBoundary />,
     children: [
       { path: "dashboard", element: <SuspenseWrapper><ProviderDashboard /></SuspenseWrapper> },
       { path: "orders", element: <SuspenseWrapper><ProviderOrders /></SuspenseWrapper> },
@@ -141,6 +145,7 @@ export const router = createBrowserRouter([
   {
     path: "/admin",
     element: <SuspenseWrapper><DashboardLayout variant="admin" /></SuspenseWrapper>,
+    errorElement: <RouteErrorBoundary />,
     children: [
       { index: true, element: <SuspenseWrapper><AdminDashboard /></SuspenseWrapper> },
       { path: "users", element: <SuspenseWrapper><AdminUsers /></SuspenseWrapper> },
@@ -157,5 +162,5 @@ export const router = createBrowserRouter([
   },
 
   // 404
-  { path: "*", element: <SuspenseWrapper><NotFound /></SuspenseWrapper> },
+  { path: "*", element: <SuspenseWrapper><NotFound /></SuspenseWrapper>, errorElement: <RouteErrorBoundary /> },
 ])
