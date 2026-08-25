@@ -215,6 +215,22 @@ real authenticated session.
 in unrelated files) are unchanged — no new warnings introduced by this
 phase's files.
 
+**Production re-verification (planned, not completed this session)**: after
+pushing (commit `c231822`), polled `https://coin-ideal-app.vercel.app` for
+~6 minutes; it was still serving the pre-Phase-5H build hash
+(`index-twqtxo1R.js`, not the locally-built `index-RvdWEWCU.js`). Attempted
+to check deploy status via the connected Vercel MCP integration —
+`list_projects` returned empty and a direct `get_deployment` lookup on
+`coin-ideal-app.vercel.app` returned `404 Deployment not found`, meaning the
+Vercel account/team connected to this session is **not** the one that owns
+this project (same class of account-mismatch risk CLAUDE.md documents for
+the Supabase CLI incident). Not fabricated or assumed fixed: this step is
+left genuinely open. All fixes above were verified locally against the real
+Supabase backend (264/264 both before and after, plus the targeted keyboard
+checks); only the live-production re-screenshot pass from the original plan
+is outstanding, pending either the deploy completing on its own or the user
+confirming deploy status from the correct Vercel account.
+
 ## Screenshots
 
 Curated evidence committed to `docs/phase-5/screenshots/` (prefixed
@@ -292,6 +308,13 @@ backend file was touched.
 - Broader Gemini reliability (intermittent `502`s) and `/`/`/commander` FCP
   variance, both already documented in Phase 5G, are unrelated to this
   phase's UI scope and were not re-investigated.
+- **Live-production re-verification is still pending** (see Browser QA) —
+  the connected Vercel MCP integration cannot see this project (account
+  mismatch), and the public URL had not picked up the new build after ~6
+  minutes of polling. All fixes are pushed to `main` (commit `c231822`) and
+  fully verified against the real Supabase backend on the local dev server;
+  only the final live-URL screenshot pass from the original plan remains to
+  be run once deploy status is confirmed.
 
 ## Final Verdict
 
@@ -303,8 +326,10 @@ every breakpoint the brief named. Four real, evidenced defects were found by
 visual (not just automated) inspection and are now fixed and re-verified:
 chat-widget mobile z-index, admin table mobile-scroll discoverability, modal
 keyboard focus trap, and Escape-key handling on both mobile navigation
-patterns. The "minor issues" qualifier reflects the two explicitly-documented,
+patterns. The "minor issues" qualifier reflects the three explicitly-documented,
 non-blocking gaps above (order-flow steps 2–4 unverifiable without live
 catalogue data; the two mobile-nav patterns' remaining stylistic
-inconsistency) — neither breaks usability, clips content, or blocks a core
-flow.
+inconsistency; live-production re-verification still pending due to a
+Vercel-account access mismatch on this session) — none of these break
+usability, clip content, or block a core flow, and all fixes are already
+merged to `main` and verified against the real backend locally.
