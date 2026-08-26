@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react"
 import { authService, type AuthUser } from "@/features/auth/services/auth.service"
+import { clearPinElevationStorage } from "@/features/auth/hooks/use-pin"
 import type { Profile } from "@/types"
 
 interface AuthContextType {
@@ -92,6 +93,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await authService.signOut()
     setUser(null)
     setProfile(null)
+    clearPinElevationStorage()
   }
 
   const signInWithGoogle = async () => {

@@ -22,6 +22,7 @@ export interface Profile {
   avatar_url: string | null
   bio: string | null
   role: UserRole
+  pin_set_at: string | null
   created_at: string
   updated_at: string
 }
@@ -110,6 +111,7 @@ export interface Address {
   state: string | null
   zip_code: string | null
   country: string
+  phone: string | null
   latitude: number | null
   longitude: number | null
   is_default: boolean
@@ -326,6 +328,9 @@ export interface Order {
   total: number
   notes: string | null
   preferred_payment_method: PaymentMethod | null
+  payment_proof_path: string | null
+  payment_reference: string | null
+  payment_proof_submitted_at: string | null
   cancelled_reason: string | null
   ready_at: string | null
   completed_at: string | null

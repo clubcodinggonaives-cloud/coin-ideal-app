@@ -7,6 +7,7 @@ import { Button, Input, Card, CardHeader, CardTitle, CardContent, Alert } from "
 import { useAuth } from "@/features/auth/hooks/use-auth"
 import { translateAuthError } from "@/features/auth/utils/translate-auth-error"
 import { dashboardPathForRole } from "@/features/auth/utils/dashboard-path"
+import { consumeIdleTimeoutFlag } from "@/features/auth/hooks/use-idle-timeout"
 import { loginSchema, type LoginFormData } from "@/lib/validators"
 import { ROUTES } from "@/lib/constants"
 
@@ -19,8 +20,11 @@ function LoginPage() {
   const [success, setSuccess] = useState<string | null>(null)
 
   useEffect(() => {
-    if ((location.state as { oauthError?: boolean } | null)?.oauthError) {
+    const state = location.state as { oauthError?: boolean } | null
+    if (state?.oauthError) {
       setError("La connexion avec Google a échoué. Veuillez réessayer.")
+    } else if (consumeIdleTimeoutFlag()) {
+      setError("Votre session a expiré après une période d'inactivité.")
     }
   }, [location.state])
 

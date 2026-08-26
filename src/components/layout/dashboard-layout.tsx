@@ -5,6 +5,9 @@ import { Navbar } from "@/components/layout/navbar"
 import { Footer } from "@/components/layout/footer"
 import { DashboardSidebar } from "@/components/layout/sidebar"
 import { useAuth } from "@/features/auth/hooks/use-auth"
+import { useIdleTimeout } from "@/features/auth/hooks/use-idle-timeout"
+import { usePin } from "@/features/auth/hooks/use-pin"
+import { PinGate } from "@/pages/auth/pin"
 import { Spinner } from "@/components/ui/spinner"
 import { ChatWidget } from "@/features/ai-assistant/components/chat-widget"
 
@@ -26,6 +29,13 @@ function DashboardLayout({ variant = "client" }: { variant?: "client" | "provide
   const { isAuthenticated, isLoading, profile } = useAuth()
   const location = useLocation()
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
+  const isProtectedVariant = variant === "admin" || variant === "provider"
+  const { elevated, refreshElevated } = usePin()
+
+  // Idle timeout: admin/provider only, per this phase's brief -- client
+  // session behavior is deliberately unchanged. Hook itself no-ops when
+  // `enabled` is false, so it's safe to call unconditionally here.
+  useIdleTimeout(isProtectedVariant && isAuthenticated)
 
   if (isLoading) {
     return (
@@ -44,6 +54,18 @@ function DashboardLayout({ variant = "client" }: { variant?: "client" | "provide
   }
   if (variant === "provider" && profile?.role !== "provider" && profile?.role !== "admin") {
     return <Navigate to="/dashboard" replace />
+  }
+
+  // PIN step-up: after the role check above (so a wrong-role user gets the
+  // existing redirect, not a PIN prompt for a workspace they can't use
+  // anyway), before rendering any admin/provider content.
+  if (isProtectedVariant && !elevated) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <Navbar />
+        <PinGate onUnlocked={refreshElevated} />
+      </div>
+    )
   }
 
   return (
