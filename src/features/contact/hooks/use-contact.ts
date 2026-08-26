@@ -32,3 +32,13 @@ export function useUpdateContactMessageStatus() {
     },
   })
 }
+
+export function useReplyToContactMessage() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, reply }: { id: string; reply: string }) => contactService.reply(id, reply),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "contact-messages"] })
+    },
+  })
+}

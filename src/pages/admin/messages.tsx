@@ -1,7 +1,11 @@
 import { useState } from "react"
-import { Mail, MailOpen, Archive, ChevronDown } from "lucide-react"
-import { Card, CardContent, Badge, Button, Skeleton, EmptyState, ErrorState } from "@/components/ui"
-import { useContactMessages, useUpdateContactMessageStatus } from "@/features/contact/hooks/use-contact"
+import { Mail, MailOpen, Archive, ChevronDown, Reply, Send } from "lucide-react"
+import { Card, CardContent, Badge, Button, Textarea, Skeleton, EmptyState, ErrorState } from "@/components/ui"
+import {
+  useContactMessages,
+  useUpdateContactMessageStatus,
+  useReplyToContactMessage,
+} from "@/features/contact/hooks/use-contact"
 import { formatDate } from "@/utils/format"
 import { cn } from "@/utils/cn"
 import type { ContactMessage, ContactMessageStatus } from "@/types"
@@ -25,7 +29,9 @@ function MessagesSkeleton() {
 
 function MessageRow({ message }: { message: ContactMessage }) {
   const [expanded, setExpanded] = useState(false)
+  const [reply, setReply] = useState(message.admin_reply ?? "")
   const updateStatus = useUpdateContactMessageStatus()
+  const replyToMessage = useReplyToContactMessage()
 
   const handleExpand = () => {
     setExpanded((e) => !e)
@@ -34,6 +40,21 @@ function MessageRow({ message }: { message: ContactMessage }) {
     if (!expanded && message.status === "new") {
       updateStatus.mutate({ id: message.id, status: "read" })
     }
+  }
+
+  const handleSendReply = () => {
+    if (!reply.trim()) return
+    replyToMessage.mutate(
+      { id: message.id, reply: reply.trim() },
+      {
+        onSuccess: () => {
+          const mailto = `mailto:${message.email}?subject=${encodeURIComponent(
+            `Re: ${message.subject}`
+          )}&body=${encodeURIComponent(reply.trim())}`
+          window.open(mailto, "_blank")
+        },
+      }
+    )
   }
 
   return (
@@ -66,12 +87,45 @@ function MessageRow({ message }: { message: ContactMessage }) {
         {expanded && (
           <div className="space-y-3 border-t border-gray-100 pt-3">
             <p className="whitespace-pre-wrap text-sm text-gray-700">{message.message}</p>
-            {message.status !== "archived" && (
-              <Button size="sm" variant="outline" onClick={() => updateStatus.mutate({ id: message.id, status: "archived" })}>
-                <Archive className="h-4 w-4" />
-                Archiver
-              </Button>
+
+            {message.replied_at && (
+              <div className="rounded-lg border border-gray-100 bg-gray-50 p-3">
+                <p className="mb-1 flex items-center gap-1.5 text-xs font-medium text-gray-500">
+                  <Reply className="h-3.5 w-3.5" />
+                  Répondu le {formatDate(message.replied_at)}
+                </p>
+                <p className="whitespace-pre-wrap text-sm text-gray-700">{message.admin_reply}</p>
+              </div>
             )}
+
+            <div className="space-y-2">
+              <Textarea
+                label="Répondre"
+                placeholder="Écrivez votre réponse..."
+                rows={3}
+                value={reply}
+                onChange={(e) => setReply(e.target.value)}
+              />
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  size="sm"
+                  onClick={handleSendReply}
+                  disabled={!reply.trim() || replyToMessage.isPending}
+                >
+                  <Send className="h-4 w-4" />
+                  Enregistrer et envoyer par email
+                </Button>
+                {message.status !== "archived" && (
+                  <Button size="sm" variant="outline" onClick={() => updateStatus.mutate({ id: message.id, status: "archived" })}>
+                    <Archive className="h-4 w-4" />
+                    Archiver
+                  </Button>
+                )}
+              </div>
+              <p className="text-xs text-gray-400">
+                La réponse est enregistrée ici, puis ouverte dans votre client email pour l&apos;envoyer réellement à {message.email}.
+              </p>
+            </div>
           </div>
         )}
       </CardContent>

@@ -42,6 +42,14 @@ class ContactService {
     const { error } = await supabase.from("contact_messages").update({ status }).eq("id", id)
     if (error) throw error
   }
+
+  async reply(id: string, reply: string): Promise<void> {
+    const { error } = await supabase
+      .from("contact_messages")
+      .update({ admin_reply: reply, replied_at: new Date().toISOString(), status: "read" })
+      .eq("id", id)
+    if (error) throw error
+  }
 }
 
 export const contactService = new ContactService()

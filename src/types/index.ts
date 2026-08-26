@@ -362,6 +362,8 @@ export interface ContactMessage {
   subject: string
   message: string
   status: ContactMessageStatus
+  admin_reply: string | null
+  replied_at: string | null
   created_at: string
 }
 
