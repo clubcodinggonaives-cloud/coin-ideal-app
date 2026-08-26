@@ -13,9 +13,13 @@ export const registerSchema = z.object({
   confirmPassword: z.string(),
   phone: z.string().optional(),
   role: z.enum(["client", "provider"], { message: "Veuillez sélectionner un rôle" }),
+  proposedServices: z.string().optional(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Les mots de passe ne correspondent pas",
   path: ["confirmPassword"],
+}).refine((data) => data.role !== "provider" || (data.proposedServices?.trim().length ?? 0) >= 10, {
+  message: "Décrivez en quelques mots les services que vous proposez (10 caractères minimum)",
+  path: ["proposedServices"],
 })
 
 export const forgotPasswordSchema = z.object({

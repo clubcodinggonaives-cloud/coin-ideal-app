@@ -81,6 +81,40 @@ class UploadsService {
     return data.signedUrl
   }
 
+  /**
+   * Pièce légale du prestataire (patente, carte professionnelle) — même
+   * bucket privé/pattern que uploadOrderDocument : jamais d'URL publique,
+   * seulement une URL signée à la demande pour l'admin qui vérifie le
+   * compte (voir getProviderDocumentUrl).
+   */
+  async uploadProviderDocument(userId: string, file: File): Promise<{ path: string }> {
+    const timestamp = Date.now()
+    const filePath = `${userId}/${timestamp}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`
+
+    const { error: uploadError } = await supabase.storage
+      .from(STORAGE_BUCKETS.PROVIDER_DOCUMENTS)
+      .upload(filePath, file)
+
+    if (uploadError) throw uploadError
+
+    return { path: filePath }
+  }
+
+  async listProviderDocuments(userId: string): Promise<{ name: string; path: string }[]> {
+    const { data, error } = await supabase.storage.from(STORAGE_BUCKETS.PROVIDER_DOCUMENTS).list(userId)
+    if (error) throw error
+    return (data ?? []).map((f) => ({ name: f.name, path: `${userId}/${f.name}` }))
+  }
+
+  async getProviderDocumentUrl(path: string, expiresInSeconds = 300): Promise<string> {
+    const { data, error } = await supabase.storage
+      .from(STORAGE_BUCKETS.PROVIDER_DOCUMENTS)
+      .createSignedUrl(path, expiresInSeconds)
+
+    if (error) throw error
+    return data.signedUrl
+  }
+
   async deleteFile(bucket: string, path: string): Promise<void> {
     const { error } = await supabase.storage.from(bucket).remove([path])
 

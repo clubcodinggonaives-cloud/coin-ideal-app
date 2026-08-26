@@ -2,13 +2,14 @@ import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Mail, Lock, Eye, EyeOff, User, Phone } from "lucide-react"
-import { Button, Input, Card, CardHeader, CardTitle, CardContent, Alert } from "@/components/ui"
+import { Mail, Lock, Eye, EyeOff, User, Phone, FileText, Upload } from "lucide-react"
+import { Button, Input, Textarea, Card, CardHeader, CardTitle, CardContent, Alert } from "@/components/ui"
 import { useAuth } from "@/features/auth/hooks/use-auth"
 import { translateAuthError } from "@/features/auth/utils/translate-auth-error"
 import { dashboardPathForRole } from "@/features/auth/utils/dashboard-path"
 import { registerSchema, type RegisterFormData } from "@/lib/validators"
 import { ROUTES } from "@/lib/constants"
+import { uploadsService } from "@/services/uploads.service"
 
 function RegisterPage() {
   const { signUp, isLoading: authLoading } = useAuth()
@@ -17,6 +18,8 @@ function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [legalDocument, setLegalDocument] = useState<File | null>(null)
+  const [documentError, setDocumentError] = useState<string | null>(null)
 
   const {
     register,
@@ -33,27 +36,37 @@ function RegisterPage() {
   const selectedRole = watch("role")
 
   const onSubmit = async (data: RegisterFormData) => {
+    if (data.role === "provider" && !legalDocument) {
+      setDocumentError("Ajoutez une pièce légale (patente ou carte professionnelle).")
+      return
+    }
+    setDocumentError(null)
     try {
       setError(null)
       setSuccess(null)
       // BUG FOUND VIA E2E (Phase 4): same missing-navigation issue as
       // login.tsx — registration silently left the user on this page.
-      // A real Supabase project may require email confirmation (session is
-      // null in that case) — only navigate straight into the app when
-      // signUp actually produced an active session; otherwise tell the
-      // user to check their inbox instead of bouncing them to a dashboard
-      // they aren't authenticated for yet.
-      const { emailConfirmationRequired, profile } = await signUp(data.email, data.password, {
+      const { profile } = await signUp(data.email, data.password, {
         firstName: data.firstName,
         lastName: data.lastName,
         phone: data.phone,
         role: data.role,
+        proposedServices: data.proposedServices,
       })
-      if (emailConfirmationRequired) {
-        setSuccess("Compte créé ! Vérifiez votre boîte mail pour confirmer votre adresse avant de vous connecter.")
-      } else {
-        navigate(dashboardPathForRole(profile?.role), { replace: true })
+      // Le compte est créé déjà connecté (register/index.ts crée l'utilisateur
+      // avec email_confirm: true puis authService.signUp() se reconnecte
+      // aussitôt) — la pièce légale peut donc être téléversée tout de suite
+      // dans le bucket privé provider-documents, qui exige une session réelle.
+      if (data.role === "provider" && legalDocument && profile?.id) {
+        try {
+          await uploadsService.uploadProviderDocument(profile.id, legalDocument)
+        } catch {
+          // Le compte existe déjà et est fonctionnel — ne pas bloquer
+          // l'inscription pour un échec d'upload ; l'admin verra un dossier
+          // vide et pourra redemander le document plutôt que de perdre le compte.
+        }
       }
+      navigate(dashboardPathForRole(profile?.role), { replace: true })
     } catch (err) {
       setError(translateAuthError(err, "Erreur lors de l'inscription. Veuillez réessayer."))
     }
@@ -211,6 +224,52 @@ function RegisterPage() {
                 <p className="text-sm text-red-500">{errors.role.message}</p>
               )}
             </div>
+
+            {selectedRole === "provider" && (
+              <div className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
+                <p className="text-sm font-medium text-gray-700">
+                  Informations prestataire — votre compte sera examiné par un administrateur avant que vos
+                  services soient visibles publiquement.
+                </p>
+
+                <Textarea
+                  label="Quels services proposez-vous ?"
+                  placeholder="Ex: Impression et copie de documents, reliure, plastification..."
+                  rows={3}
+                  error={errors.proposedServices?.message}
+                  {...register("proposedServices")}
+                />
+
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                    Pièce légale (patente ou carte professionnelle)
+                  </label>
+                  <label className="flex cursor-pointer items-center gap-3 rounded-lg border-2 border-dashed border-gray-300 p-4 hover:border-primary-400">
+                    <input
+                      type="file"
+                      accept="application/pdf,image/jpeg,image/png"
+                      className="hidden"
+                      onChange={(e) => {
+                        setLegalDocument(e.target.files?.[0] ?? null)
+                        setDocumentError(null)
+                      }}
+                    />
+                    {legalDocument ? (
+                      <>
+                        <FileText className="h-5 w-5 shrink-0 text-primary-600" />
+                        <span className="truncate text-sm text-gray-700">{legalDocument.name}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="h-5 w-5 shrink-0 text-gray-400" />
+                        <span className="text-sm text-gray-500">PDF, JPG ou PNG — cliquez pour choisir un fichier</span>
+                      </>
+                    )}
+                  </label>
+                  {documentError && <p className="mt-1.5 text-sm text-red-500">{documentError}</p>}
+                </div>
+              </div>
+            )}
 
             <Button
               type="submit"
