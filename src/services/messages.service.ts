@@ -5,7 +5,7 @@ class MessagesService {
   async getThreads(userId: string): Promise<MessageThread[]> {
     const { data, error } = await supabase
       .from("message_threads")
-      .select("*, participant1:profiles!message_threads_participant_1_fkey(*), participant2:profiles!message_threads_participant_2_fkey(*)")
+      .select("*, participant1:profiles!message_threads_participant_1_fkey(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at), participant2:profiles!message_threads_participant_2_fkey(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at)")
       .or(`participant_1.eq.${userId},participant_2.eq.${userId}`)
       .order("last_message_at", { ascending: false })
 
@@ -16,7 +16,7 @@ class MessagesService {
   async getMessages(threadId: string): Promise<Message[]> {
     const { data, error } = await supabase
       .from("messages")
-      .select("*, sender:profiles(*)")
+      .select("*, sender:profiles(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at)")
       .eq("thread_id", threadId)
       .order("created_at", { ascending: true })
 
@@ -38,7 +38,7 @@ class MessagesService {
         sender_id: user.id,
         content,
       })
-      .select("*, sender:profiles(*)")
+      .select("*, sender:profiles(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at)")
       .single()
 
     if (error) throw error
@@ -69,7 +69,7 @@ class MessagesService {
     if (existing) {
       const { data: thread, error } = await supabase
         .from("message_threads")
-        .select("*, participant1:profiles!message_threads_participant_1_fkey(*), participant2:profiles!message_threads_participant_2_fkey(*)")
+        .select("*, participant1:profiles!message_threads_participant_1_fkey(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at), participant2:profiles!message_threads_participant_2_fkey(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at)")
         .eq("id", existing.id)
         .single()
 
@@ -83,7 +83,7 @@ class MessagesService {
         participant_1: user.id,
         participant_2: otherUserId,
       })
-      .select("*, participant1:profiles!message_threads_participant_1_fkey(*), participant2:profiles!message_threads_participant_2_fkey(*)")
+      .select("*, participant1:profiles!message_threads_participant_1_fkey(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at), participant2:profiles!message_threads_participant_2_fkey(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at)")
       .single()
 
     if (error) throw error

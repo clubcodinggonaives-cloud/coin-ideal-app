@@ -44,9 +44,13 @@ class AdminService {
     const from = (page - 1) * pageSize
     const to = from + pageSize - 1
 
+    // Explicit column list -- never pin_hash/failed_pin_attempts/
+    // pin_locked_until (00060): this powers the admin users LIST, so a
+    // select("*") here would have sent every user's PIN hash to whichever
+    // admin's browser loads this page.
     const { data, error, count } = await supabase
       .from("profiles")
-      .select("*", { count: "exact" })
+      .select("id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at", { count: "exact" })
       .order("created_at", { ascending: false })
       .range(from, to)
 
@@ -72,7 +76,7 @@ class AdminService {
 
     const { data, error, count } = await supabase
       .from("provider_profiles")
-      .select("*, profiles:profiles(*)", { count: "exact" })
+      .select("*, profiles:profiles(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at)", { count: "exact" })
       .order("created_at", { ascending: false })
       .range(from, to)
 
@@ -131,7 +135,7 @@ class AdminService {
 
     const { data, error, count } = await supabase
       .from("service_requests")
-      .select("*, service:services(*), client:profiles!service_requests_client_id_fkey(*), provider_profile:provider_profiles!service_requests_provider_id_fkey(profiles:profiles(*))", { count: "exact" })
+      .select("*, service:services(*), client:profiles!service_requests_client_id_fkey(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at), provider_profile:provider_profiles!service_requests_provider_id_fkey(profiles:profiles(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at))", { count: "exact" })
       .order("created_at", { ascending: false })
       .range(from, to)
 

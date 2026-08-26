@@ -8,7 +8,7 @@ const ORDER_SELECT = `
   status_history:order_status_history(*),
   payments(*),
   delivery_address:addresses(*),
-  client:profiles!orders_client_id_fkey(*)
+  client:profiles!orders_client_id_fkey(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at)
 `
 
 /**

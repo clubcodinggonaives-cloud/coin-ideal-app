@@ -5,7 +5,7 @@ class FavoritesService {
   async getFavorites(userId: string): Promise<Favorite[]> {
     const { data, error } = await supabase
       .from("favorites")
-      .select("*, service:services(*, provider:provider_profiles(*, profiles:profiles(*)), category:categories(*))")
+      .select("*, service:services(*, provider:provider_profiles(*, profiles:profiles(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at)), category:categories(*))")
       .eq("user_id", userId)
       .order("created_at", { ascending: false })
 

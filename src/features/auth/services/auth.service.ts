@@ -99,9 +99,13 @@ class AuthService {
   }
 
   async getProfile(userId: string): Promise<Profile | null> {
+    // Explicit column list -- never pin_hash/failed_pin_attempts/
+    // pin_locked_until (Phase 6 PIN security columns, 00060). Those must
+    // never reach the browser, even for the user's own row; pin_set_at
+    // alone is enough for the UI to know whether a PIN has been configured.
     const { data, error } = await supabase
       .from("profiles")
-      .select("*")
+      .select("id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at")
       .eq("id", userId)
       .single()
 

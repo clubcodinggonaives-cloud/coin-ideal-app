@@ -32,7 +32,7 @@ class BookingsService {
 
     const { data, error } = await supabase
       .from("service_requests")
-      .select("*, service:services(*, category:categories(*), provider:provider_profiles(*, profiles:profiles(*))), client:profiles!service_requests_client_id_fkey(*), provider_profile:provider_profiles!service_requests_provider_id_fkey(profiles:profiles(*))")
+      .select("*, service:services(*, category:categories(*), provider:provider_profiles(*, profiles:profiles(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at))), client:profiles!service_requests_client_id_fkey(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at), provider_profile:provider_profiles!service_requests_provider_id_fkey(profiles:profiles(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at))")
       .eq(column, userId)
       .order("created_at", { ascending: false })
 
@@ -60,7 +60,7 @@ class BookingsService {
         preferred_time: data.preferredTime ?? null,
         address: data.address,
       })
-      .select("*, service:services(*), client:profiles!service_requests_client_id_fkey(*), provider_profile:provider_profiles!service_requests_provider_id_fkey(profiles:profiles(*))")
+      .select("*, service:services(*), client:profiles!service_requests_client_id_fkey(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at), provider_profile:provider_profiles!service_requests_provider_id_fkey(profiles:profiles(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at))")
       .single()
 
     if (error) throw error
@@ -85,7 +85,7 @@ class BookingsService {
       .from("service_requests")
       .update(updateData)
       .eq("id", requestId)
-      .select("*, service:services(*), client:profiles!service_requests_client_id_fkey(*), provider_profile:provider_profiles!service_requests_provider_id_fkey(profiles:profiles(*))")
+      .select("*, service:services(*), client:profiles!service_requests_client_id_fkey(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at), provider_profile:provider_profiles!service_requests_provider_id_fkey(profiles:profiles(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at))")
       .single()
 
     if (error) throw error
@@ -100,7 +100,7 @@ class BookingsService {
 
     const { data, error } = await supabase
       .from("bookings")
-      .select("*, service:services(*, category:categories(*), provider:provider_profiles(*, profiles:profiles(*))), client:profiles!bookings_client_id_fkey(*), provider_profile:provider_profiles!bookings_provider_id_fkey(profiles:profiles(*))")
+      .select("*, service:services(*, category:categories(*), provider:provider_profiles(*, profiles:profiles(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at))), client:profiles!bookings_client_id_fkey(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at), provider_profile:provider_profiles!bookings_provider_id_fkey(profiles:profiles(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at))")
       .eq(column, userId)
       .order("created_at", { ascending: false })
 
@@ -136,7 +136,7 @@ class BookingsService {
         scheduled_time: data.scheduledTime ?? null,
         total_price: serviceRequest.service?.price ?? 0,
       })
-      .select("*, service:services(*), client:profiles!bookings_client_id_fkey(*), provider_profile:provider_profiles!bookings_provider_id_fkey(profiles:profiles(*))")
+      .select("*, service:services(*), client:profiles!bookings_client_id_fkey(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at), provider_profile:provider_profiles!bookings_provider_id_fkey(profiles:profiles(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at))")
       .single()
 
     if (error) throw error
@@ -160,7 +160,7 @@ class BookingsService {
       .from("bookings")
       .update(updateData)
       .eq("id", bookingId)
-      .select("*, service:services(*), client:profiles!bookings_client_id_fkey(*), provider_profile:provider_profiles!bookings_provider_id_fkey(profiles:profiles(*))")
+      .select("*, service:services(*), client:profiles!bookings_client_id_fkey(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at), provider_profile:provider_profiles!bookings_provider_id_fkey(profiles:profiles(id, email, first_name, last_name, phone, avatar_url, bio, role, pin_set_at, created_at, updated_at))")
       .single()
 
     if (error) throw error
