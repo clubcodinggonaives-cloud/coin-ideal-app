@@ -1,9 +1,11 @@
 import { useState } from "react"
-import { Briefcase, Search } from "lucide-react"
+import { Link } from "react-router-dom"
+import { Briefcase, Plus, Search } from "lucide-react"
 import {
   Card,
   CardContent,
   Badge,
+  Button,
   Input,
   Skeleton,
   EmptyState,
@@ -16,6 +18,7 @@ import {
 import { useAdminServices } from "@/features/admin/hooks/use-admin"
 import { formatCurrency, formatDate } from "@/utils/format"
 import { cn } from "@/utils/cn"
+import { ROUTES } from "@/lib/constants"
 
 function AdminServicesSkeleton() {
   return (
@@ -47,9 +50,17 @@ function AdminServicesPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Services</h1>
-        <p className="text-gray-500">Consultez tous les services de la plateforme.</p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Services</h1>
+          <p className="text-gray-500">Consultez et gérez tous les services de la plateforme.</p>
+        </div>
+        <Link to={ROUTES.ADMIN_SERVICE_NEW}>
+          <Button>
+            <Plus className="h-4 w-4" />
+            Ajouter un service
+          </Button>
+        </Link>
       </div>
 
       <div className="max-w-sm">

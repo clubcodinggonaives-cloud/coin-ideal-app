@@ -29,6 +29,13 @@ export function useAdminServices(page = 1) {
   })
 }
 
+export function useAdminProviderOptions() {
+  return useQuery({
+    queryKey: ["admin", "providers", "options"],
+    queryFn: () => adminService.getAllProvidersForSelect(),
+  })
+}
+
 export function useAdminRequests(page = 1) {
   return useQuery({
     queryKey: ["admin", "requests", page],

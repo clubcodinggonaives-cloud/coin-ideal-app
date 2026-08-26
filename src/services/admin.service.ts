@@ -89,6 +89,17 @@ class AdminService {
     }
   }
 
+  /** Non paginé, pour un <select> — juste de quoi identifier un prestataire. */
+  async getAllProvidersForSelect(): Promise<Pick<ProviderProfile, "id" | "business_name">[]> {
+    const { data, error } = await supabase
+      .from("provider_profiles")
+      .select("id, business_name")
+      .order("business_name", { ascending: true })
+
+    if (error) throw error
+    return data ?? []
+  }
+
   async getAllServices(page: number = 1): Promise<PaginatedResponse<Service>> {
     const pageSize = PAGE_SIZE
     const from = (page - 1) * pageSize
