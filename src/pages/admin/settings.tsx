@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom"
 import { Building2, Tag, FolderOpen, Wallet, ArrowRight } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, Button } from "@/components/ui"
+import { ChangePinCard } from "@/features/auth/components/change-pin-card"
 import { COMPANY, PAYMENT_METHODS, ROUTES } from "@/lib/constants"
 
 /**
@@ -62,6 +63,8 @@ function AdminSettingsPage() {
           </div>
         </CardContent>
       </Card>
+
+      <ChangePinCard />
 
       <Card>
         <CardHeader>

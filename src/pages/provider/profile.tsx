@@ -13,6 +13,7 @@ import {
   Alert,
 } from "@/components/ui"
 import { useAuth } from "@/features/auth/hooks/use-auth"
+import { ChangePinCard } from "@/features/auth/components/change-pin-card"
 import { useProvider, useUpdateProviderProfile } from "@/features/providers/hooks/use-providers"
 
 interface ProviderProfileForm {
@@ -168,6 +169,8 @@ function ProviderProfilePage() {
           </form>
         </CardContent>
       </Card>
+
+      <ChangePinCard />
     </div>
   )
 }
