@@ -162,12 +162,12 @@ function DashboardOrdersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
           <h1 className="text-2xl font-bold text-gray-900">Mes commandes</h1>
           <p className="text-gray-500">Impression, copie — suivez l'avancement de vos commandes.</p>
         </div>
-        <Link to={ROUTES.ORDER}>
+        <Link to={ROUTES.ORDER} className="shrink-0">
           <Button size="sm">Nouvelle commande</Button>
         </Link>
       </div>

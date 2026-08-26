@@ -35,8 +35,8 @@ function FinishingOptionRow({ option }: { option: FinishingOption }) {
   if (editing) {
     return (
       <div className="flex flex-wrap items-center gap-2 px-4 py-3">
-        <Input value={label} onChange={(e) => setLabel(e.target.value)} className="max-w-[12rem]" />
-        <Input type="number" min={0} value={cost} onChange={(e) => setCost(e.target.value)} className="max-w-[8rem]" />
+        <Input value={label} onChange={(e) => setLabel(e.target.value)} className="w-full sm:w-auto sm:max-w-[12rem]" />
+        <Input type="number" min={0} value={cost} onChange={(e) => setCost(e.target.value)} className="w-full sm:w-auto sm:max-w-[8rem]" />
         <Button
           size="sm"
           isLoading={update.isPending}
@@ -54,12 +54,12 @@ function FinishingOptionRow({ option }: { option: FinishingOption }) {
   }
 
   return (
-    <div className="flex items-center justify-between px-4 py-3">
-      <div>
-        <p className="font-medium text-gray-900">{option.label}</p>
-        <p className="text-xs text-gray-500">{option.id}</p>
+    <div className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="min-w-0">
+        <p className="truncate font-medium text-gray-900">{option.label}</p>
+        <p className="truncate text-xs text-gray-500">{option.id}</p>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <span className="font-semibold text-primary-700">{formatCurrency(option.cost)}</span>
         <Badge variant={option.is_active ? "success" : "secondary"}>
           {option.is_active ? "Active" : "Inactive"}
@@ -93,16 +93,16 @@ function NewFinishingOptionForm({ onDone }: { onDone: () => void }) {
         placeholder="ex: hole-punch"
         value={id}
         onChange={(e) => setId(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))}
-        className="max-w-[10rem]"
+        className="w-full sm:w-auto sm:max-w-[10rem]"
       />
-      <Input label="Libellé" value={label} onChange={(e) => setLabel(e.target.value)} className="max-w-[12rem]" />
+      <Input label="Libellé" value={label} onChange={(e) => setLabel(e.target.value)} className="w-full sm:w-auto sm:max-w-[12rem]" />
       <Input
         label="Coût (HTG)"
         type="number"
         min={0}
         value={cost}
         onChange={(e) => setCost(e.target.value)}
-        className="max-w-[8rem]"
+        className="w-full sm:w-auto sm:max-w-[8rem]"
       />
       <Button
         size="sm"
@@ -127,8 +127,8 @@ function DeliveryZoneRow({ zone }: { zone: DeliveryZone }) {
   if (editing) {
     return (
       <div className="flex flex-wrap items-center gap-2 px-4 py-3">
-        <Input value={name} onChange={(e) => setName(e.target.value)} className="max-w-[12rem]" />
-        <Input type="number" min={0} value={fee} onChange={(e) => setFee(e.target.value)} className="max-w-[8rem]" />
+        <Input value={name} onChange={(e) => setName(e.target.value)} className="w-full sm:w-auto sm:max-w-[12rem]" />
+        <Input type="number" min={0} value={fee} onChange={(e) => setFee(e.target.value)} className="w-full sm:w-auto sm:max-w-[8rem]" />
         <Button
           size="sm"
           isLoading={update.isPending}
@@ -144,9 +144,9 @@ function DeliveryZoneRow({ zone }: { zone: DeliveryZone }) {
   }
 
   return (
-    <div className="flex items-center justify-between px-4 py-3">
-      <p className="font-medium text-gray-900">{zone.name}</p>
-      <div className="flex items-center gap-3">
+    <div className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+      <p className="truncate font-medium text-gray-900">{zone.name}</p>
+      <div className="flex flex-wrap items-center gap-3">
         <span className="font-semibold text-primary-700">{formatCurrency(zone.fee)}</span>
         <Badge variant={zone.is_active ? "success" : "secondary"}>{zone.is_active ? "Active" : "Inactive"}</Badge>
         <Button
@@ -172,8 +172,8 @@ function NewDeliveryZoneForm({ onDone }: { onDone: () => void }) {
 
   return (
     <div className="flex flex-wrap items-end gap-2 border-t border-gray-100 px-4 py-3">
-      <Input label="Nom de la zone" placeholder="ex: Centre-ville" value={name} onChange={(e) => setName(e.target.value)} className="max-w-[12rem]" />
-      <Input label="Frais (HTG)" type="number" min={0} value={fee} onChange={(e) => setFee(e.target.value)} className="max-w-[8rem]" />
+      <Input label="Nom de la zone" placeholder="ex: Centre-ville" value={name} onChange={(e) => setName(e.target.value)} className="w-full sm:w-auto sm:max-w-[12rem]" />
+      <Input label="Frais (HTG)" type="number" min={0} value={fee} onChange={(e) => setFee(e.target.value)} className="w-full sm:w-auto sm:max-w-[8rem]" />
       <Button
         size="sm"
         disabled={!name}
@@ -199,13 +199,13 @@ function SettingRow({ setting }: { setting: Setting }) {
   const dirty = value !== String(setting.value)
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
-      <div>
+    <div className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="min-w-0">
         <p className="font-medium text-gray-900">{SETTING_LABELS[setting.key] ?? setting.key}</p>
         {setting.description && <p className="max-w-md text-xs text-gray-500">{setting.description}</p>}
       </div>
       <div className="flex items-center gap-2">
-        <Input type="number" step="0.1" value={value} onChange={(e) => setValue(e.target.value)} className="max-w-[8rem]" />
+        <Input type="number" step="0.1" value={value} onChange={(e) => setValue(e.target.value)} className="w-full sm:w-auto sm:max-w-[8rem]" />
         <Button
           size="sm"
           disabled={!dirty}
@@ -241,7 +241,7 @@ function AdminPricingPage() {
 
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <CardTitle className="flex items-center gap-2">
               <Tag className="h-5 w-5 text-primary-600" />
               Options de finition
@@ -270,7 +270,7 @@ function AdminPricingPage() {
 
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <CardTitle className="flex items-center gap-2">
               <Truck className="h-5 w-5 text-primary-600" />
               Zones de livraison

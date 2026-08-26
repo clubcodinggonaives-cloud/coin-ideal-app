@@ -158,6 +158,33 @@ function ContactPage() {
             </Card>
           </div>
         </div>
+
+        <Card className="mt-8">
+          <CardContent className="pt-6">
+            <h2 className="mb-1 text-xl font-bold text-gray-900">Nous trouver</h2>
+            <p className="mb-4 text-sm text-gray-500">
+              {COMPANY.street}, {COMPANY.city}, {COMPANY.country}
+            </p>
+            {/* Aucune coordonnée GPS exacte n'est confirmée pour COIN-IDEAL (voir
+                COMPANY dans src/lib/constants.ts) — plutôt que d'inventer une
+                latitude/longitude, cette carte géocode l'adresse texte via
+                l'URL de recherche Google Maps sans clé API (aucun secret,
+                aucune configuration requise). Position approximative, basée
+                sur la géolocalisation de l'adresse par Google, pas un point
+                confirmé manuellement. */}
+            <div className="w-full overflow-hidden rounded-xl border border-gray-200">
+              <iframe
+                title="Localisation de COIN-IDEAL Multi-Service"
+                src={`https://www.google.com/maps?q=${encodeURIComponent(
+                  `${COMPANY.street}, ${COMPANY.city}, ${COMPANY.country}`
+                )}&output=embed`}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="h-64 w-full border-0 sm:h-80"
+              />
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )
