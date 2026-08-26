@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Briefcase, Search, ShieldCheck, ShieldOff, Star } from "lucide-react"
+import { Briefcase, FileText, Search, ShieldCheck, ShieldOff, Star } from "lucide-react"
 import {
   Card,
   CardContent,
@@ -17,6 +17,7 @@ import {
 import { useAdminProviders, useVerifyProvider } from "@/features/admin/hooks/use-admin"
 import { formatDate } from "@/utils/format"
 import { cn } from "@/utils/cn"
+import { uploadsService } from "@/services/uploads.service"
 
 function AdminProvidersSkeleton() {
   return (
@@ -31,9 +32,27 @@ function AdminProvidersSkeleton() {
 function AdminProvidersPage() {
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState("")
+  const [documentLoadingId, setDocumentLoadingId] = useState<string | null>(null)
 
   const { data, isLoading, error, refetch } = useAdminProviders(page)
   const verifyProvider = useVerifyProvider()
+
+  const handleViewDocument = async (userId: string) => {
+    setDocumentLoadingId(userId)
+    try {
+      const files = await uploadsService.listProviderDocuments(userId)
+      if (files.length === 0) {
+        window.alert("Aucune pièce légale n'a été téléversée par ce prestataire.")
+        return
+      }
+      const url = await uploadsService.getProviderDocumentUrl(files[files.length - 1].path)
+      window.open(url, "_blank", "noopener,noreferrer")
+    } catch {
+      window.alert("Impossible de charger le document pour le moment.")
+    } finally {
+      setDocumentLoadingId(null)
+    }
+  }
 
   if (isLoading) return <AdminProvidersSkeleton />
   if (error) return <ErrorState onRetry={refetch} />
@@ -118,20 +137,34 @@ function AdminProvidersPage() {
                         {formatDate(provider.created_at)}
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() =>
-                            verifyProvider.mutate(provider.user_id)
-                          }
-                          disabled={verifyProvider.isPending}
-                        >
-                          {provider.is_verified ? (
-                            <ShieldOff className="h-4 w-4 text-gray-500" />
-                          ) : (
-                            <ShieldCheck className="h-4 w-4 text-green-600" />
-                          )}
-                        </Button>
+                        <div className="flex justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleViewDocument(provider.user_id)}
+                            disabled={documentLoadingId === provider.user_id}
+                            aria-label="Voir la pièce légale"
+                            title="Voir la pièce légale"
+                          >
+                            <FileText className="h-4 w-4 text-gray-500" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() =>
+                              verifyProvider.mutate({ userId: provider.user_id, isVerified: !provider.is_verified })
+                            }
+                            disabled={verifyProvider.isPending}
+                            aria-label={provider.is_verified ? "Retirer la vérification" : "Vérifier ce prestataire"}
+                            title={provider.is_verified ? "Retirer la vérification" : "Vérifier ce prestataire"}
+                          >
+                            {provider.is_verified ? (
+                              <ShieldOff className="h-4 w-4 text-gray-500" />
+                            ) : (
+                              <ShieldCheck className="h-4 w-4 text-green-600" />
+                            )}
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   ))}

@@ -162,10 +162,10 @@ class AdminService {
       .eq("user_id", userId)
   }
 
-  async verifyProvider(userId: string): Promise<void> {
+  async verifyProvider(userId: string, isVerified: boolean): Promise<void> {
     const { error } = await supabase
       .from("provider_profiles")
-      .update({ is_verified: true, updated_at: new Date().toISOString() })
+      .update({ is_verified: isVerified, updated_at: new Date().toISOString() })
       .eq("user_id", userId)
 
     if (error) throw error

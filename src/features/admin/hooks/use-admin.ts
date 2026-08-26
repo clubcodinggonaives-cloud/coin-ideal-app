@@ -56,7 +56,8 @@ export function useSuspendUser() {
 export function useVerifyProvider() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: adminService.verifyProvider,
+    mutationFn: ({ userId, isVerified }: { userId: string; isVerified: boolean }) =>
+      adminService.verifyProvider(userId, isVerified),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "providers"] })
     },
