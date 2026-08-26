@@ -169,24 +169,34 @@ Deno.serve(async (req) => {
     return jsonResponse({ error: "Assistant temporairement indisponible." }, 503, headers)
   }
 
-  // Identifie l'appelant pour la limite de débit : l'utilisateur authentifié
-  // si présent (son propre token, distinct de tout autre appelant), sinon
-  // l'adresse IP transmise par la plateforme d'edge. Persisté en base
-  // (00032) — contrairement à un compteur en mémoire, ceci tient face à
-  // plusieurs instances/régions et aux redémarrages à froid.
-  //
-  // BUG trouvé en Phase 5A, testé en direct sur la fonction déployée : tout
-  // visiteur anonyme envoie automatiquement `Authorization: Bearer
-  // <clé anon>` (le client Supabase l'ajoute toujours) — cette clé est
-  // PUBLIQUE et IDENTIQUE pour tout le monde. L'ancienne logique
-  // `authHeader || ...` prenait donc toujours cette valeur partagée pour
-  // les visiteurs anonymes, les faisant tous tomber dans le MÊME compteur
-  // de 10 req/min au lieu de 10 chacun. On ne traite l'en-tête comme une
-  // identité par-appelant que s'il diffère de la clé anon publique connue.
   const authHeader = req.headers.get("authorization") ?? ""
   const bearerToken = authHeader.replace(/^Bearer\s+/i, "")
   const isPerCallerToken = bearerToken.length > 0 && bearerToken !== SUPABASE_ANON_KEY
-  const rateLimitKey = isPerCallerToken ? authHeader : req.headers.get("x-forwarded-for") || "anonymous"
+
+  // Réservé aux comptes connectés (changement de portée demandé
+  // explicitement par l'opérateur du projet — le cahier des charges §7
+  // listait initialement l'assistant comme accessible au visiteur anonyme
+  // du site public ; ce n'est plus le cas). Un visiteur anonyme envoie
+  // toujours `Authorization: Bearer <clé anon>` (le client Supabase
+  // l'ajoute systématiquement) — cette clé est publique et identique pour
+  // tout le monde, donc jamais une session réelle. Vérifié côté serveur, pas
+  // seulement en masquant le widget côté client (qui n'empêcherait pas un
+  // appel direct à cet endpoint).
+  if (!isPerCallerToken) {
+    return jsonResponse({ error: "Vous devez être connecté pour utiliser l'assistant." }, 401, headers)
+  }
+
+  const supabaseAuthCheck = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  const { data: authData, error: authCheckError } = await supabaseAuthCheck.auth.getUser(bearerToken)
+  if (authCheckError || !authData?.user) {
+    return jsonResponse({ error: "Vous devez être connecté pour utiliser l'assistant." }, 401, headers)
+  }
+
+  // Identifie l'appelant pour la limite de débit : maintenant toujours son
+  // propre token (les appels non authentifiés sont rejetés ci-dessus).
+  // Persisté en base (00032) — contrairement à un compteur en mémoire, ceci
+  // tient face à plusieurs instances/régions et aux redémarrages à froid.
+  const rateLimitKey = authHeader
 
   const supabaseForRateLimit = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
   const { data: allowed, error: rateLimitError } = await supabaseForRateLimit.rpc("check_ai_rate_limit", {
@@ -299,14 +309,14 @@ Deno.serve(async (req) => {
 // 1. Rate limiting maintenant persistant (00032, table ai_rate_limits) —
 //    tient face aux redémarrages à froid et à plusieurs instances/régions,
 //    contrairement à la Map en mémoire d'origine.
-// 2. Pas d'authentification requise : l'assistant est appelable par tout
-//    visiteur du site public, conformément à sa présence dans la section
-//    "Site public" du cahier des charges (§7). S'il doit un jour répondre
-//    sur des données spécifiques à un client connecté (ex. état de SA
-//    commande), cela demande une vérification de session Supabase ici
-//    (`supabase.auth.getUser(token)`) et une requête scoping strictement
-//    ses propres données — non implémenté, non nécessaire pour les cas
-//    d'usage listés au §6.4 qui sont tous des questions générales.
+// 2. Authentification requise (changement de portée demandé explicitement
+//    par l'opérateur du projet, pour ne pas consommer le quota Gemini sur
+//    des visiteurs anonymes) : tout appel sans session Supabase réelle est
+//    rejeté en 401, vérifié ici via `supabase.auth.getUser(token)` — pas
+//    seulement masqué côté client. Toujours pas de scoping sur les données
+//    propres à un client (ex. état de SA commande) — non implémenté, non
+//    nécessaire pour les cas d'usage listés au §6.4 qui sont tous des
+//    questions générales.
 // 3. Pas de persistance de conversation (`ai_conversations`/`ai_messages`,
 //    §11 du cahier des charges) — chaque appel est sans état ; l'historique
 //    vit uniquement côté client (voir ai-assistant.service.ts) tant qu'une

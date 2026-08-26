@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { MessageCircle, X, Send, RotateCcw, Loader2, Bot, User } from "lucide-react"
 import { useAiChat } from "@/features/ai-assistant/hooks/use-ai-chat"
+import { useAuth } from "@/features/auth/hooks/use-auth"
 import { cn } from "@/utils/cn"
 
 /**
@@ -14,6 +15,7 @@ import { cn } from "@/utils/cn"
 function ChatWidget() {
   const [open, setOpen] = useState(false)
   const [input, setInput] = useState("")
+  const { isAuthenticated } = useAuth()
   const { messages, isLoading, error, send, retry } = useAiChat()
   const scrollRef = useRef<HTMLDivElement>(null)
 
@@ -27,6 +29,11 @@ function ChatWidget() {
     send(input)
     setInput("")
   }
+
+  // Réservé aux comptes connectés — un visiteur anonyme ne doit jamais
+  // pouvoir consommer le quota Gemini (aucune vérification d'auth
+  // n'existait avant côté client comme côté Edge Function).
+  if (!isAuthenticated) return null
 
   return (
     <>
