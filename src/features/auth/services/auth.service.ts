@@ -12,21 +12,53 @@ export interface AuthSession {
 }
 
 class AuthService {
-  async signUp(email: string, password: string, metadata: { firstName: string; lastName: string; phone?: string; role?: string }) {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          first_name: metadata.firstName,
-          last_name: metadata.lastName,
-          phone: metadata.phone || null,
+  /**
+   * Passe par l'Edge Function `register` (clé service_role, jamais exposée
+   * ici) plutôt que `supabase.auth.signUp()` directement : celui-ci envoie
+   * toujours l'email de confirmation par défaut du projet, limité à 2/heure
+   * (config.toml jamais aligné avec le projet distant — voir le commentaire
+   * de la fonction). `admin.createUser({ email_confirm: true })` crée le
+   * compte déjà confirmé, sans email du tout, puis on se connecte
+   * immédiatement avec les mêmes identifiants pour obtenir une vraie
+   * session — le trigger handle_new_user() (00054/00057) tourne de la même
+   * façon quelle que soit l'API qui a inséré la ligne dans auth.users.
+   */
+  async signUp(
+    email: string,
+    password: string,
+    metadata: { firstName: string; lastName: string; phone?: string; role?: string; proposedServices?: string }
+  ) {
+    const { data: fnData, error: fnError } = await supabase.functions.invoke<{ success?: boolean; error?: string }>(
+      "register",
+      {
+        body: {
+          email,
+          password,
+          firstName: metadata.firstName,
+          lastName: metadata.lastName,
+          phone: metadata.phone,
           role: metadata.role || "client",
+          proposedServices: metadata.proposedServices,
         },
-      },
-    })
-    if (error) throw error
-    return data
+      }
+    )
+
+    if (fnError) {
+      const context = (fnError as { context?: Response }).context
+      let serverMessage: string | undefined
+      if (context) {
+        try {
+          const responseBody = await context.clone().json()
+          serverMessage = responseBody?.error
+        } catch {
+          // fall through to the generic message below
+        }
+      }
+      throw new Error(serverMessage || "Erreur lors de l'inscription. Veuillez réessayer.")
+    }
+    if (fnData?.error) throw new Error(fnData.error)
+
+    return this.signIn(email, password)
   }
 
   async signIn(email: string, password: string) {

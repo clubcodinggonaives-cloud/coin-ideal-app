@@ -11,7 +11,7 @@ interface AuthContextType {
   signUp: (
     email: string,
     password: string,
-    metadata: { firstName: string; lastName: string; phone?: string; role?: string }
+    metadata: { firstName: string; lastName: string; phone?: string; role?: string; proposedServices?: string }
   ) => Promise<{ emailConfirmationRequired: boolean; profile: Profile | null }>
   signOut: () => Promise<void>
   signInWithGoogle: () => Promise<void>
@@ -74,7 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signUp = async (
     email: string,
     password: string,
-    metadata: { firstName: string; lastName: string; phone?: string; role?: string }
+    metadata: { firstName: string; lastName: string; phone?: string; role?: string; proposedServices?: string }
   ) => {
     const data = await authService.signUp(email, password, metadata)
     let profileData: Profile | null = null
