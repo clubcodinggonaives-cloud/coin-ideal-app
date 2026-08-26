@@ -43,6 +43,35 @@ export function nextStatus(order: Order): OrderStatus | null {
   }
 }
 
+function PaymentProofLink({ filePath }: { filePath: string | null }) {
+  const [loading, setLoading] = useState(false)
+
+  if (!filePath) return null
+
+  const handleOpen = async () => {
+    setLoading(true)
+    try {
+      const url = await uploadsService.getPaymentProofUrl(filePath)
+      window.open(url, "_blank", "noopener,noreferrer")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={handleOpen}
+      disabled={loading}
+      className="inline-flex items-center gap-1.5 text-sm font-medium text-primary-600 hover:text-primary-700 disabled:opacity-50"
+    >
+      {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileText className="h-3.5 w-3.5" />}
+      Voir la preuve de paiement
+      <ExternalLink className="h-3 w-3" />
+    </button>
+  )
+}
+
 function DocumentLink({ filePath, fileName }: { filePath: string | null; fileName: string | null }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -156,6 +185,32 @@ function StaffOrderCard({ order, showClient = false }: StaffOrderCardProps) {
 
         <div className="border-t border-gray-100 pt-3">
           <OrderStatusTimeline order={order} />
+        </div>
+
+        {order.reception_method === "delivery" && order.delivery_address && (
+          <div className="rounded-lg bg-gray-50 p-3 text-sm text-gray-700">
+            <p className="font-medium text-gray-900">Livraison</p>
+            <p>{order.delivery_address.street}, {order.delivery_address.city}</p>
+            {order.delivery_address.phone && <p>Téléphone : {order.delivery_address.phone}</p>}
+            {order.notes && <p>Instructions : {order.notes}</p>}
+            <p className="mt-1 text-gray-500">Frais de livraison : {formatCurrency(order.delivery_fee)}</p>
+          </div>
+        )}
+
+        <div className="rounded-lg bg-gray-50 p-3 text-sm text-gray-700">
+          <p className="font-medium text-gray-900">Paiement</p>
+          <p>{PAYMENT_METHODS.find((m) => m.value === order.preferred_payment_method)?.label ?? "Non précisé"}</p>
+          {(order.preferred_payment_method === "moncash" || order.preferred_payment_method === "natcash") && (
+            <div className="mt-1 space-y-1">
+              {order.payment_reference && <p>Référence : {order.payment_reference}</p>}
+              <p className="text-gray-500">
+                {order.payment_proof_submitted_at
+                  ? `Preuve envoyée le ${formatDate(order.payment_proof_submitted_at)}`
+                  : "Aucune preuve envoyée pour le moment"}
+              </p>
+              <PaymentProofLink filePath={order.payment_proof_path} />
+            </div>
+          )}
         </div>
 
         {(order.items ?? []).length > 0 && (

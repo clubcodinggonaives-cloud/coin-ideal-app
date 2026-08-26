@@ -100,6 +100,7 @@ export const STORAGE_BUCKETS = {
   SERVICE_IMAGES: "service-images",
   PROVIDER_DOCUMENTS: "provider-documents",
   ORDER_DOCUMENTS: "order-documents",
+  PAYMENT_PROOFS: "payment-proofs",
 } as const
 
 /** Formats de fichiers acceptés pour une commande d'impression/copie (cahier des charges §4.2). */

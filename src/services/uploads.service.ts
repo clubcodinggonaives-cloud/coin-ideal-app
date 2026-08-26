@@ -115,6 +115,33 @@ class UploadsService {
     return data.signedUrl
   }
 
+  /**
+   * MonCash/NatCash payment-proof screenshot/PDF -- dedicated private
+   * bucket (00062), separate from order-documents (different lifecycle:
+   * this is payment evidence, not the document to print). Same
+   * signed-URL-on-demand pattern as order documents, never a public URL.
+   */
+  async uploadPaymentProof(userId: string, orderId: string, file: File): Promise<{ path: string }> {
+    const filePath = `${userId}/${orderId}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`
+
+    const { error: uploadError } = await supabase.storage
+      .from(STORAGE_BUCKETS.PAYMENT_PROOFS)
+      .upload(filePath, file)
+
+    if (uploadError) throw uploadError
+
+    return { path: filePath }
+  }
+
+  async getPaymentProofUrl(path: string, expiresInSeconds = 300): Promise<string> {
+    const { data, error } = await supabase.storage
+      .from(STORAGE_BUCKETS.PAYMENT_PROOFS)
+      .createSignedUrl(path, expiresInSeconds)
+
+    if (error) throw error
+    return data.signedUrl
+  }
+
   async deleteFile(bucket: string, path: string): Promise<void> {
     const { error } = await supabase.storage.from(bucket).remove([path])
 

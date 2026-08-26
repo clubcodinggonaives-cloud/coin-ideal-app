@@ -12,7 +12,7 @@ import { useDocumentOrderServices } from "@/features/document-orders/hooks/use-d
 import { useSubmitDocumentOrder } from "@/features/document-orders/hooks/use-submit-document-order"
 import { usePricingConfig } from "@/features/document-orders/hooks/use-pricing-config"
 import { estimateOrderPrice } from "@/features/document-orders/utils/estimate"
-import { INITIAL_ORDER_STATE, type DocumentOrderState } from "@/features/document-orders/types"
+import { INITIAL_ORDER_STATE, isProofPaymentMethod, type DocumentOrderState } from "@/features/document-orders/types"
 import { ORDER_FILE_MAX_SIZE_MB, ROUTES } from "@/lib/constants"
 import { formatCurrency } from "@/utils/format"
 
@@ -50,8 +50,11 @@ function DocumentOrderPage() {
     if (step === 1 && !order.serviceId) {
       errors.serviceId = "Veuillez choisir un service."
     }
-    if (step === 2 && order.reception === "delivery" && !order.deliveryAddress.trim()) {
-      errors.deliveryAddress = "Veuillez indiquer une adresse de livraison."
+    if (step === 2 && order.reception === "delivery" && !order.deliveryAddressId) {
+      errors.deliveryAddressId = "Veuillez sélectionner ou ajouter une adresse de livraison."
+    }
+    if (step === 2 && isProofPaymentMethod(order.paymentMethod) && !order.paymentProofFile) {
+      errors.paymentProofFile = "Ajoutez une preuve de paiement (capture d'écran ou reçu)."
     }
     setFieldErrors(errors)
     if (Object.keys(errors).length > 0) return
@@ -181,7 +184,8 @@ function DocumentOrderPage() {
                             order={order}
                             deliveryFee={pricingConfig?.flatDeliveryFee ?? 0}
                             onChange={patch}
-                            addressError={fieldErrors.deliveryAddress}
+                            addressError={fieldErrors.deliveryAddressId}
+                            proofError={fieldErrors.paymentProofFile}
                           />
                         </div>
                       </div>
@@ -204,7 +208,7 @@ function DocumentOrderPage() {
                           </Alert>
                         )}
                         <div className="mt-4 lg:hidden">
-                          <OrderSummary order={order} service={selectedService} finishingOptions={pricingConfig?.finishingOptions ?? []} total={total} />
+                          <OrderSummary order={order} service={selectedService} finishingOptions={pricingConfig?.finishingOptions ?? []} total={total} deliveryFee={pricingConfig?.flatDeliveryFee ?? 0} />
                         </div>
                       </div>
                     )}
@@ -233,7 +237,7 @@ function DocumentOrderPage() {
 
           <div className="hidden lg:block">
             <div className="sticky top-24">
-              <OrderSummary order={order} service={selectedService} finishingOptions={pricingConfig?.finishingOptions ?? []} total={total} />
+              <OrderSummary order={order} service={selectedService} finishingOptions={pricingConfig?.finishingOptions ?? []} total={total} deliveryFee={pricingConfig?.flatDeliveryFee ?? 0} />
               {order.copies > 0 && order.pages > 0 && (
                 <p className="mt-3 text-center text-xs text-gray-500">
                   Estimation en temps réel : {formatCurrency(total)}

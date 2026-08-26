@@ -19,9 +19,14 @@ export interface DocumentOrderState {
   sided: PrintSided
   finishingIds: string[]
   reception: ReceptionMethod
-  deliveryAddress: string
+  /** Adresse `addresses.id` sélectionnée/créée — jamais de texte libre (voir 00061/addressesService). */
+  deliveryAddressId: string
+  /** Instructions de livraison — transmises via le paramètre p_notes existant de create_order(), pas une nouvelle colonne. */
+  deliveryInstructions: string
   paymentMethod: string
-  notes: string
+  /** Uniquement pour moncash/natcash — voir submit_payment_proof() (00061). */
+  paymentProofFile: File | null
+  paymentReference: string
 }
 
 export const INITIAL_ORDER_STATE: DocumentOrderState = {
@@ -33,9 +38,16 @@ export const INITIAL_ORDER_STATE: DocumentOrderState = {
   sided: "simplex",
   finishingIds: [],
   reception: "pickup",
-  deliveryAddress: "",
+  deliveryAddressId: "",
+  deliveryInstructions: "",
   paymentMethod: "cash",
-  notes: "",
+  paymentProofFile: null,
+  paymentReference: "",
+}
+
+/** Dérive le mode de paiement affiché à partir de la méthode existante -- pas de champ dupliqué. */
+export function isProofPaymentMethod(method: string): boolean {
+  return method === "moncash" || method === "natcash"
 }
 
 /**

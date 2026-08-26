@@ -46,6 +46,21 @@ class OrdersService {
     return data as string
   }
 
+  /**
+   * Client-only, own-order-only, moncash/natcash-only -- submit_payment_proof()
+   * (00061) enforces all three server-side; a mismatched method or someone
+   * else's order raises an error there, not here.
+   */
+  async submitPaymentProof(orderId: string, filePath: string, reference?: string | null): Promise<void> {
+    const { error } = await supabase.rpc("submit_payment_proof", {
+      p_order_id: orderId,
+      p_file_path: filePath,
+      p_reference: reference ?? null,
+    })
+
+    if (error) throw error
+  }
+
   async updateOrderStatus(orderId: string, newStatus: OrderStatus, note?: string): Promise<void> {
     const { error } = await supabase.rpc("update_order_status", {
       p_order_id: orderId,

@@ -29,6 +29,8 @@ class AddressesService {
     street: string
     city: string
     country?: string
+    phone?: string
+    isDefault?: boolean
   }): Promise<Address> {
     const { data, error } = await supabase
       .from("addresses")
@@ -38,6 +40,8 @@ class AddressesService {
         street: input.street,
         city: input.city,
         country: input.country ?? "Haïti",
+        phone: input.phone ?? null,
+        is_default: input.isDefault ?? false,
       })
       .select()
       .single()

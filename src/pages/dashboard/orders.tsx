@@ -6,7 +6,7 @@ import { useMyOrders } from "@/features/orders/hooks/use-orders"
 import { OrderStatusTimeline } from "@/features/orders/components/order-status-timeline"
 import { uploadsService } from "@/services/uploads.service"
 import { formatCurrency, formatDate } from "@/utils/format"
-import { ORDER_STATUS_LABELS, ROUTES } from "@/lib/constants"
+import { ORDER_STATUS_LABELS, PAYMENT_METHODS, ROUTES } from "@/lib/constants"
 import { cn } from "@/utils/cn"
 import { Link, useNavigate } from "react-router-dom"
 import type { Order, OrderStatus } from "@/types"
@@ -69,6 +69,35 @@ function DocumentLink({ filePath, fileName }: { filePath: string | null; fileNam
   )
 }
 
+function PaymentProofLink({ filePath }: { filePath: string | null }) {
+  const [loading, setLoading] = useState(false)
+
+  if (!filePath) return null
+
+  const handleOpen = async () => {
+    setLoading(true)
+    try {
+      const url = await uploadsService.getPaymentProofUrl(filePath)
+      window.open(url, "_blank", "noopener,noreferrer")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={handleOpen}
+      disabled={loading}
+      className="inline-flex items-center gap-1.5 text-sm font-medium text-primary-600 hover:text-primary-700 disabled:opacity-50"
+    >
+      {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileText className="h-3.5 w-3.5" />}
+      Voir ma preuve de paiement
+      <ExternalLink className="h-3 w-3" />
+    </button>
+  )
+}
+
 function OrderCard({ order }: { order: Order }) {
   const [expanded, setExpanded] = useState(false)
 
@@ -127,8 +156,27 @@ function OrderCard({ order }: { order: Order }) {
             {order.reception_method === "delivery" && order.delivery_address && (
               <p className="text-gray-500">
                 Livraison : {order.delivery_address.street}, {order.delivery_address.city}
+                {order.delivery_address.phone ? ` · ${order.delivery_address.phone}` : ""}
               </p>
             )}
+
+            <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-gray-50 p-3">
+              <div className="space-y-0.5 text-gray-500">
+                <p>Sous-total : {formatCurrency(order.subtotal)}</p>
+                {order.reception_method === "delivery" && <p>Frais de livraison : {formatCurrency(order.delivery_fee)}</p>}
+                <p>
+                  Paiement :{" "}
+                  {PAYMENT_METHODS.find((m) => m.value === order.preferred_payment_method)?.label ??
+                    "Non précisé"}
+                  {order.preferred_payment_method === "moncash" || order.preferred_payment_method === "natcash"
+                    ? order.payment_proof_submitted_at
+                      ? " · preuve envoyée, en attente de validation"
+                      : " · preuve non encore envoyée"
+                    : ""}
+                </p>
+              </div>
+              <PaymentProofLink filePath={order.payment_proof_path} />
+            </div>
 
             {(order.payments ?? []).length > 0 && (
               <div>
