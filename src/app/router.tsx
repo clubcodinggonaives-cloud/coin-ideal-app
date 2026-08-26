@@ -42,6 +42,7 @@ const Login = lazy(() => import("@/pages/auth/login"))
 const Register = lazy(() => import("@/pages/auth/register"))
 const ForgotPassword = lazy(() => import("@/pages/auth/forgot-password"))
 const ResetPassword = lazy(() => import("@/pages/auth/reset-password"))
+const AuthCallback = lazy(() => import("@/pages/auth/callback"))
 
 // Dashboard pages
 const DashboardOverview = lazy(() => import("@/pages/dashboard/overview"))
@@ -70,6 +71,7 @@ const AdminDashboard = lazy(() => import("@/pages/admin/dashboard"))
 const AdminUsers = lazy(() => import("@/pages/admin/users"))
 const AdminProviders = lazy(() => import("@/pages/admin/providers"))
 const AdminServices = lazy(() => import("@/pages/admin/services"))
+const AdminServiceNew = lazy(() => import("@/pages/admin/service-new"))
 const AdminCategories = lazy(() => import("@/pages/admin/categories"))
 const AdminPricing = lazy(() => import("@/pages/admin/pricing"))
 const AdminOrders = lazy(() => import("@/pages/admin/orders"))
@@ -104,6 +106,7 @@ export const router = createBrowserRouter([
   { path: "/auth/register", element: <SuspenseWrapper><Register /></SuspenseWrapper>, errorElement: <RouteErrorBoundary /> },
   { path: "/auth/forgot-password", element: <SuspenseWrapper><ForgotPassword /></SuspenseWrapper>, errorElement: <RouteErrorBoundary /> },
   { path: "/auth/reset-password", element: <SuspenseWrapper><ResetPassword /></SuspenseWrapper>, errorElement: <RouteErrorBoundary /> },
+  { path: "/auth/callback", element: <SuspenseWrapper><AuthCallback /></SuspenseWrapper>, errorElement: <RouteErrorBoundary /> },
 
   // Client dashboard
   {
@@ -151,6 +154,7 @@ export const router = createBrowserRouter([
       { path: "users", element: <SuspenseWrapper><AdminUsers /></SuspenseWrapper> },
       { path: "providers", element: <SuspenseWrapper><AdminProviders /></SuspenseWrapper> },
       { path: "services", element: <SuspenseWrapper><AdminServices /></SuspenseWrapper> },
+      { path: "services/new", element: <SuspenseWrapper><AdminServiceNew /></SuspenseWrapper> },
       { path: "categories", element: <SuspenseWrapper><AdminCategories /></SuspenseWrapper> },
       { path: "pricing", element: <SuspenseWrapper><AdminPricing /></SuspenseWrapper> },
       { path: "orders", element: <SuspenseWrapper><AdminOrders /></SuspenseWrapper> },

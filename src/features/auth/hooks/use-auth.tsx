@@ -7,12 +7,12 @@ interface AuthContextType {
   profile: Profile | null
   isAuthenticated: boolean
   isLoading: boolean
-  signIn: (email: string, password: string) => Promise<void>
+  signIn: (email: string, password: string) => Promise<{ profile: Profile | null }>
   signUp: (
     email: string,
     password: string,
     metadata: { firstName: string; lastName: string; phone?: string; role?: string }
-  ) => Promise<{ emailConfirmationRequired: boolean }>
+  ) => Promise<{ emailConfirmationRequired: boolean; profile: Profile | null }>
   signOut: () => Promise<void>
   signInWithGoogle: () => Promise<void>
   refreshProfile: () => Promise<void>
@@ -28,6 +28,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loadProfile = useCallback(async (userId: string) => {
     const profileData = await authService.getProfile(userId)
     setProfile(profileData)
+    return profileData
   }, [])
 
   useEffect(() => {
@@ -64,8 +65,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const data = await authService.signIn(email, password)
     if (data.user) {
       setUser({ id: data.user.id, email: data.user.email || "" })
-      await loadProfile(data.user.id)
+      const profileData = await loadProfile(data.user.id)
+      return { profile: profileData }
     }
+    return { profile: null }
   }
 
   const signUp = async (
@@ -74,14 +77,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     metadata: { firstName: string; lastName: string; phone?: string; role?: string }
   ) => {
     const data = await authService.signUp(email, password, metadata)
+    let profileData: Profile | null = null
     if (data.user) {
       setUser({ id: data.user.id, email: data.user.email || "" })
-      await loadProfile(data.user.id)
+      profileData = await loadProfile(data.user.id)
     }
     // supabase-js returns session: null when email confirmation is required
     // (project-dependent — disabled on this local stack, but a real project
     // may have it on). The caller must not assume the user is logged in.
-    return { emailConfirmationRequired: !data.session }
+    return { emailConfirmationRequired: !data.session, profile: profileData }
   }
 
   const signOut = async () => {

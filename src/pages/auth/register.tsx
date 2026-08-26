@@ -6,6 +6,7 @@ import { Mail, Lock, Eye, EyeOff, User, Phone } from "lucide-react"
 import { Button, Input, Card, CardHeader, CardTitle, CardContent, Alert } from "@/components/ui"
 import { useAuth } from "@/features/auth/hooks/use-auth"
 import { translateAuthError } from "@/features/auth/utils/translate-auth-error"
+import { dashboardPathForRole } from "@/features/auth/utils/dashboard-path"
 import { registerSchema, type RegisterFormData } from "@/lib/validators"
 import { ROUTES } from "@/lib/constants"
 
@@ -42,7 +43,7 @@ function RegisterPage() {
       // signUp actually produced an active session; otherwise tell the
       // user to check their inbox instead of bouncing them to a dashboard
       // they aren't authenticated for yet.
-      const { emailConfirmationRequired } = await signUp(data.email, data.password, {
+      const { emailConfirmationRequired, profile } = await signUp(data.email, data.password, {
         firstName: data.firstName,
         lastName: data.lastName,
         phone: data.phone,
@@ -51,7 +52,7 @@ function RegisterPage() {
       if (emailConfirmationRequired) {
         setSuccess("Compte créé ! Vérifiez votre boîte mail pour confirmer votre adresse avant de vous connecter.")
       } else {
-        navigate(ROUTES.DASHBOARD, { replace: true })
+        navigate(dashboardPathForRole(profile?.role), { replace: true })
       }
     } catch (err) {
       setError(translateAuthError(err, "Erreur lors de l'inscription. Veuillez réessayer."))

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -6,6 +6,7 @@ import { Mail, Lock, Eye, EyeOff } from "lucide-react"
 import { Button, Input, Card, CardHeader, CardTitle, CardContent, Alert } from "@/components/ui"
 import { useAuth } from "@/features/auth/hooks/use-auth"
 import { translateAuthError } from "@/features/auth/utils/translate-auth-error"
+import { dashboardPathForRole } from "@/features/auth/utils/dashboard-path"
 import { loginSchema, type LoginFormData } from "@/lib/validators"
 import { ROUTES } from "@/lib/constants"
 
@@ -16,6 +17,12 @@ function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+
+  useEffect(() => {
+    if ((location.state as { oauthError?: boolean } | null)?.oauthError) {
+      setError("La connexion avec Google a échoué. Veuillez réessayer.")
+    }
+  }, [location.state])
 
   const {
     register,
@@ -29,14 +36,16 @@ function LoginPage() {
     try {
       setError(null)
       setSuccess(null)
-      await signIn(data.email, data.password)
+      const { profile } = await signIn(data.email, data.password)
       // BUG FOUND VIA E2E (Phase 4): this component previously never
       // navigated after a successful signIn — the user stayed stuck on
       // /auth/login with no feedback and no way forward except manually
       // typing a URL. `from` supports the redirect-back-after-login pattern
-      // already used elsewhere (e.g. src/pages/order/document.tsx).
+      // already used elsewhere (e.g. src/pages/order/document.tsx) and takes
+      // priority; otherwise land on the dashboard matching the account's
+      // actual role instead of always the client one.
       const from = (location.state as { from?: Location } | null)?.from
-      navigate(from?.pathname ?? ROUTES.DASHBOARD, { replace: true })
+      navigate(from?.pathname ?? dashboardPathForRole(profile?.role), { replace: true })
     } catch (err) {
       setError(translateAuthError(err, "Erreur de connexion. Veuillez réessayer."))
     }
